@@ -15,7 +15,7 @@ spec:
     targetRevision: artifactory
     path: 'components/artifactory'
   - repoURL: https://charts.jfrog.io
-    chart: jfrog/artifactory-jcr
+    chart: artifactory-jcr
     targetRevision: 107.104.15 # Use a specific chart version
     helm:
       releaseName: jfrog-container-registry
