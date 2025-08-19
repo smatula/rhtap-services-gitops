@@ -1,0 +1,84 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: jfrog-artifactory-jcr
+  namespace: gitops-resources
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: gitops-resources
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: artifactory-jcr2
+  sources:
+  - repoURL: https://github.com/rhopp/rhtap-services-gitops
+    targetRevision: artifactory
+    path: 'components/artifactory'
+  - repoURL: https://charts.jfrog.io
+    chart: jfrog/artifactory-jcr
+    targetRevision: 107.104.15 # Use a specific chart version
+    helm:
+      releaseName: jfrog-container-registry
+      values: |
+        containerSecurityContext:
+          enabled: false
+        artifactory:
+          podSecurityContext:
+            enabled: false
+
+          serviceAccount:
+            create: true
+            name: "artifactory"
+          customValues: |
+            security:
+              anonAccess:
+                enabled: false
+              adminUser:
+                enabled: true
+                password: "abc123"
+
+        installer:
+          platform: jcr-helm
+
+        installerInfo: '{"productId":"Helm_artifactory-jcr/{{ .Chart.Version }}","features":[{"featureId":"Platform/{{ printf "%s-%s" "kubernetes" .Capabilities.KubeVersion.Version }}"},{"featureId":"Database/{{ .Values.database.type }}"},{"featureId":"PostgreSQL_Enabled/{{ .Values.postgresql.enabled }}"},{"featureId":"Nginx_Enabled/{{ .Values.nginx.enabled }}"},{"featureId":"ArtifactoryPersistence_Type/{{ .Values.artifactory.persistence.type }}"},{"featureId":"SplitServicesToContainers_Enabled/{{ .Values.splitServicesToContainers }}"},{"featureId":"UnifiedSecretInstallation_Enabled/{{ .Values.artifactory.unifiedSecretInstallation }}"},{"featureId":"Filebeat_Enabled/{{ .Values.filebeat.enabled }}"},{"featureId":"ReplicaCount/{{ .Values.artifactory.replicaCount }}"}]}'
+
+        ## Nginx
+        nginx:
+          enabled: false
+          tlsSecretName: ""
+          service:
+            type: LoadBalancer
+
+        ## Ingress
+        ingress:
+          enabled: false
+          tls:
+
+        ## PostgreSQL
+        postgresql:
+          enabled: true
+          securityContext:
+            enabled: false
+          containerSecurityContext:
+            enabled: false
+
+        ## This key is required for upgrades to protect old PostgreSQL chart's breaking changes.
+        databaseUpgradeReady: "yes"
+
+        jfconnect:
+          enabled: false
+
+        federation:
+          enabled: false
+
+  syncPolicy:
+    managedNamespaceMetadata:
+      labels:
+        argocd.argoproj.io/managed-by: openshift-gitops
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true
+
