@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: artifactory-setup-script
-  namespace: artifactory
+  namespace: artifactory-jcr2
 data:
   setup.sh: |
     #!/bin/bash
@@ -22,7 +22,7 @@ data:
     NEW_PASSWORD=$(cat /etc/artifactory-creds/new-admin-password)
     
     echo "Changing admin password..."
-    curl -s -f -u "admin:password" -X POST "http://localhost:8081/artifactory/api/security/users/admin/password" \
+    curl -s -f -u "admin:abc123" -X POST "http://localhost:8081/artifactory/api/security/users/admin/password" \
     -H "Content-Type: application/json" \
     -d "{ \"oldPassword\": \"password\", \"newPassword1\": \"${NEW_PASSWORD}\", \"newPassword2\": \"${NEW_PASSWORD}\" }"
     

@@ -9,9 +9,9 @@ spec:
   project: gitops-resources
   destination:
     server: https://kubernetes.default.svc
-    namespace: artifactory
+    namespace: artifactory-jcr2
   sources:
-  - repoURL: https://github.com/rhopp/rhtap-services-gitops
+  - repoURL: https://github.com/smatula/rhtap-services-gitops
     targetRevision: artifactory
     path: 'components/artifactory'
   - repoURL: https://charts.jfrog.io

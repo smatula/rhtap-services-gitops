@@ -14,7 +14,7 @@ source ./envfile
 # oc create secret generic hive-aws-creds -n hive --from-literal=aws_access_key_id="$AWS_ACCESS_KEY_ID" --from-literal=aws_secret_access_key="$AWS_SECRET_ACCESS_KEY"
 
 
-oc new-project artifactory
+oc new-project artifactory-jcr2
 
-oc create secret generic artifactory-admin-creds -n artifactory --from-literal=new-admin-password=admin123
+oc create secret generic artifactory-admin-creds -n artifactory-jcr2 --from-literal=new-admin-password=admin123
 
