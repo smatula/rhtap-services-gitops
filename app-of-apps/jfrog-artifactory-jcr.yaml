@@ -3,29 +3,21 @@ kind: Application
 metadata:
   name: jfrog-artifactory-jcr
   namespace: gitops-resources
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
 spec:
-  project: gitops-resources
   destination:
-    server: https://kubernetes.default.svc
     namespace: artifactory-jcr2
+    server: https://kubernetes.default.svc
+  project: gitops-resources
   sources:
-  - repoURL: https://github.com/smatula/rhtap-services-gitops
-    targetRevision: artifactory
-    path: 'components/artifactory'
   - repoURL: https://charts.jfrog.io
-    chart: artifactory-jcr
+    chart: jfrog/artifactory-jcr
     targetRevision: 107.104.15 # Use a specific chart version
     helm:
       releaseName: jfrog-container-registry
+      valueFiles:
+        - $values/values.yaml
       values: |
-        containerSecurityContext:
-          enabled: false
         artifactory:
-          podSecurityContext:
-            enabled: false
-
           serviceAccount:
             create: true
             name: "artifactory"
@@ -36,76 +28,9 @@ spec:
               adminUser:
                 enabled: true
                 password: "abc123"
-
-        installer:
-          platform: jcr-helm
-
-        installerInfo: '{"productId":"Helm_artifactory-jcr/{{ .Chart.Version }}","features":[{"featureId":"Platform/{{ printf "%s-%s" "kubernetes" .Capabilities.KubeVersion.Version }}"},{"featureId":"Database/{{ .Values.database.type }}"},{"featureId":"PostgreSQL_Enabled/{{ .Values.postgresql.enabled }}"},{"featureId":"Nginx_Enabled/{{ .Values.nginx.enabled }}"},{"featureId":"ArtifactoryPersistence_Type/{{ .Values.artifactory.persistence.type }}"},{"featureId":"SplitServicesToContainers_Enabled/{{ .Values.splitServicesToContainers }}"},{"featureId":"UnifiedSecretInstallation_Enabled/{{ .Values.artifactory.unifiedSecretInstallation }}"},{"featureId":"Filebeat_Enabled/{{ .Values.filebeat.enabled }}"},{"featureId":"ReplicaCount/{{ .Values.artifactory.replicaCount }}"}]}'
-
-        ## Nginx
-        nginx:
-          enabled: false
-          podSecurityContext:
-            enabled: false
-          containerSecurityContext:
-            enabled: false
-          tlsSecretName: ""
-          service:
-            type: LoadBalancer
-
-        ## Ingress
-        ingress:
-          enabled: false
-          tls:
-
-        ## PostgreSQL
-        postgresql:
-          enabled: true
-          podSecurityContext:
-            enabled: false
-          securityContext:
-            enabled: false
-          containerSecurityContext:
-            enabled: false
-
-        ## This key is required for upgrades to protect old PostgreSQL chart's breaking changes.
-        databaseUpgradeReady: "yes"
-
-        initContainers:
-          resources:
-            requests:
-              cpu: 100m
-              memory: 128Mi
-            limits:
-              cpu: 200m
-              memory: 256Mi
-
-        # Arrr! Add our custom init container using extraInitContainers
-        extraInitContainers:
-          - name: setup-artifactory
-            image: "alpine/curl:3.14"
-            command: ["/bin/sh", "-c", "/scripts/setup.sh"]
-            volumeMounts:
-              - name: setup-script
-                mountPath: /scripts
-              - name: admin-creds
-                mountPath: /etc/artifactory-creds
-
-        extraVolumes:
-          - name: setup-script
-            configMap:
-              name: artifactory-setup-script
-              defaultMode: 0755
-          - name: admin-creds
-            secret:
-              secretName: artifactory-admin-creds
-
-        jfconnect:
-          enabled: false
-
-        federation:
-          enabled: false
-
+  - repoURL: https://github.com/smatula/rhtap-services-gitops
+    targetRevision: artifactory
+    ref: values
   syncPolicy:
     managedNamespaceMetadata:
       labels:
