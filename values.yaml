@@ -29,17 +29,26 @@ artifactory:
 
   # Arrr! Configure the init containers resources as the chart expects
   initContainers:
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
-      limits:
-        cpu: 200m
-        memory: 256Mi
+    - name: setup-artifactory
+      image: {{ include "artifactory.getImageInfoByValue" (list . "initContainers") }}
+      imagePullPolicy: {{ .Values.initContainers.image.pullPolicy }}
+      command: ["/bin/sh", "-c", "/scripts/setup.sh"]
+      volumeMounts:
+        - name: setup-script
+          mountPath: /scripts
+        - name: admin-creds
+          mountPath: /etc/artifactory-creds
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 200m
+          memory: 256Mi
 
   # Arrr! Add our custom init container using extraInitContainers
   customInitContainers: |
-    - name: setup-artifactory
+    - name: setup-artifactory2
       image: {{ include "artifactory.getImageInfoByValue" (list . "initContainers") }}
       imagePullPolicy: {{ .Values.initContainers.image.pullPolicy }}
       command: ["/bin/sh", "-c", "/scripts/setup.sh"]
