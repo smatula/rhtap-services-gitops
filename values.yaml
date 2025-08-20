@@ -30,7 +30,7 @@ artifactory:
   # Arrr! Configure the init containers resources as the chart expects
   initContainers:
     - name: setup-artifactory
-      image: "alpine/curl:3.14"
+      image: "releases-docker.jfrog.io/ubi9/ubi-minimal:9.5.1741850109"
       command: ["/bin/sh", "-c", "/scripts/setup.sh"]
       volumeMounts:
         - name: setup-script
