@@ -38,22 +38,22 @@ artifactory:
         memory: 256Mi
 
   # Arrr! Add our custom init container using extraInitContainers
-    extraInitContainers:
-      - name: setup-artifactory
-        image: "alpine/curl:3.14"
-        command: ["/bin/sh", "-c", "/scripts/setup.sh"]
-        volumeMounts:
-          - name: setup-script
-            mountPath: /scripts
-          - name: admin-creds
-            mountPath: /etc/artifactory-creds
+  extraInitContainers:
+    - name: setup-artifactory
+      image: "alpine/curl:3.14"
+      command: ["/bin/sh", "-c", "/scripts/setup.sh"]
+      volumeMounts:
+        - name: setup-script
+          mountPath: /scripts
+        - name: admin-creds
+          mountPath: /etc/artifactory-creds
 
-    extraVolumes:
-      - name: setup-script
-        configMap:
-          name: artifactory-setup-script
-          defaultMode: 0755
-      - name: admin-creds
-        secret:
-          secretName: artifactory-admin-creds
+  extraVolumes:
+    - name: setup-script
+      configMap:
+        name: artifactory-setup-script
+        defaultMode: 0755
+    - name: admin-creds
+      secret:
+        secretName: artifactory-admin-creds
 
