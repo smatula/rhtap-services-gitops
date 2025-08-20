@@ -5,32 +5,23 @@ metadata:
   namespace: gitops-resources
 spec:
   destination:
-    namespace: artifactory-jcr2
+    namespace: artifactory
     server: https://kubernetes.default.svc
   project: gitops-resources
   sources:
+
   - repoURL: https://charts.jfrog.io
     chart: artifactory-jcr
-    targetRevision: 107.117.12 # Use a specific chart version
+    targetRevision: 107.117.8 # Use a specific chart version
     helm:
       releaseName: jfrog-container-registry
       valueFiles:
         - $values/values.yaml
-      values: |
-        artifactory:
-          serviceAccount:
-            create: true
-            name: "artifactory"
-          customValues: |
-            security:
-              anonAccess:
-                enabled: false
-              adminUser:
-                enabled: true
-                password: "abc123"
+
   - repoURL: https://github.com/smatula/rhtap-services-gitops
     targetRevision: artifactory
     ref: values
+
   syncPolicy:
     managedNamespaceMetadata:
       labels:
