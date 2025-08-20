@@ -17,7 +17,8 @@ artifactory:
 
   postgresql:
     enabled: true
-    postgresqlPassword: "a-strong-password"
+    auth:
+      password: "a-strong-password"
     primary:
       podSecurityContext:
         enabled: false
