@@ -1,0 +1,33 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: artifactory
+    component: artifactory
+  name: artifactory-docker
+  namespace: artifactory2
+spec:
+  port:
+    targetPort: http-artifactory
+  tls:
+    termination: edge
+  to:
+    kind: Service
+    name: jfrog-container-registry-artifactory
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: artifactory
+    component: artifactory
+  name: artifactory-ui
+  namespace: artifactory2
+spec:
+  port:
+    targetPort: http-router
+  tls:
+    termination: edge
+  to:
+    kind: Service
+    name: jfrog-container-registry-artifactory

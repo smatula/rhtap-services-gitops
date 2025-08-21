@@ -5,12 +5,10 @@ metadata:
   namespace: gitops-resources
 spec:
   destination:
-    namespace: artifactory
+    namespace: artifactory2
     server: https://kubernetes.default.svc
   project: gitops-resources
-  # --- NEW: Use the 'sources' field instead of 'source' ---
   sources:
-  # Source 1: The raw Kubernetes manifests for the Secret and ConfigMap
   - repoURL: 'https://github.com/smatula/rhtap-services-gitops'
     targetRevision: artifactory
     path: 'components/artifactory'

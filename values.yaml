@@ -27,7 +27,7 @@ artifactory:
       containerSecurityContext:
         enabled: false
 
-  # Arrr! Configure the init containers resources as the chart expects
+  # Configure the init containers resources as the chart expects
   initContainers:
     resources:
       requests:
@@ -36,24 +36,4 @@ artifactory:
       limits:
         cpu: 200m
         memory: 256Mi
-
-  # Arrr! Add our custom init container using extraInitContainers
-  customInitContainers:
-    - name: setup-artifactory
-      image: "alpine/curl:3.14"
-      command: ["/bin/sh", "-c", "/scripts/setup.sh"]
-      volumeMounts:
-        - name: setup-script
-          mountPath: /scripts
-        - name: admin-creds
-          mountPath: /etc/artifactory-creds
-
-  customVolumes:
-    - name: setup-script
-      configMap:
-        name: artifactory-setup-script
-        defaultMode: 0755
-    - name: admin-creds
-      secret:
-        secretName: artifactory-admin-creds
 
