@@ -2,18 +2,29 @@
 artifactory:
   containerSecurityContext:
     enabled: false
+  podSecurityContext:
+    enabled: false
   artifactory:
     podSecurityContext:
       enabled: false
-    #   image:
-    #     repository: releases-docker.jfrog.io/jfrog/artifactory-jcr
-    #     version: 7.71.5
+    containerSecurityContext:
+      enabled: false
+    # Configure the init containers resources as the chart expects
+    initContainers:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 200m
+          memory: 256Mi
+
   nginx:
     enabled: false
-  podSecurityContext:
-    enabled: false
-  containerSecurityContext:
-    enabled: false
+    containerSecurityContext:
+      enabled: false
+    podSecurityContext:
+      enabled: false
 
   postgresql:
     enabled: true
@@ -26,16 +37,6 @@ artifactory:
         enabled: false
       containerSecurityContext:
         enabled: false
-
-  # Configure the init containers resources as the chart expects
-  initContainers:
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
-      limits:
-        cpu: 200m
-        memory: 256Mi
 
   ingress:
     enabled: true
