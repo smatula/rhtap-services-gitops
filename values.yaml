@@ -39,13 +39,14 @@ artifactory:
 
   ingress:
     enabled: true
-    artifactory-ui:
+    main:
       enabled: true
       annotations:
         route.openshift.io/termination: edge
         route.openshift.io/insecure-policy: Redirect
-    artifactory-docker:
+    docker:
       enabled: true
       annotations:
         route.openshift.io/termination: passthrough
         route.openshift.io/insecure-policy: Redirect
+
