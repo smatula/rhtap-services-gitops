@@ -9,9 +9,6 @@ spec:
     server: https://kubernetes.default.svc
   project: gitops-resources
   sources:
-  - repoURL: 'https://github.com/smatula/rhtap-services-gitops'
-    targetRevision: artifactory
-    path: 'components/artifactory'
   - repoURL: https://charts.jfrog.io
     chart: artifactory-jcr
     targetRevision: 107.117.12 # Use a specific chart version

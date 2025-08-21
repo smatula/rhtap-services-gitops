@@ -37,3 +37,15 @@ artifactory:
         cpu: 200m
         memory: 256Mi
 
+  ingress:
+    enabled: true
+    artifactory-ui:
+      enabled: true
+      annotations:
+        route.openshift.io/termination: edge
+        route.openshift.io/insecure-policy: Redirect
+    artifactory-docker:
+      enabled: true
+      annotations:
+        route.openshift.io/termination: passthrough
+        route.openshift.io/insecure-policy: Redirect
