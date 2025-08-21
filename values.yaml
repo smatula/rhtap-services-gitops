@@ -1,15 +1,14 @@
 ---
 artifactory:
-  containerSecurityContext:
-    enabled: false
   podSecurityContext:
+    enabled: false
+  containerSecurityContext:
     enabled: false
   artifactory:
     podSecurityContext:
       enabled: false
     containerSecurityContext:
       enabled: false
-    # Configure the init containers resources as the chart expects
     initContainers:
       resources:
         requests:
@@ -18,14 +17,12 @@ artifactory:
         limits:
           cpu: 200m
           memory: 256Mi
-
   nginx:
     enabled: false
     containerSecurityContext:
       enabled: false
     podSecurityContext:
       enabled: false
-
   postgresql:
     enabled: true
     auth:
@@ -37,7 +34,6 @@ artifactory:
         enabled: false
       containerSecurityContext:
         enabled: false
-
   ingress:
     enabled: true
     main:
@@ -50,4 +46,3 @@ artifactory:
       annotations:
         route.openshift.io/termination: passthrough
         route.openshift.io/insecure-policy: Redirect
-
