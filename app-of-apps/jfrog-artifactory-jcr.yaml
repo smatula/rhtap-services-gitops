@@ -5,7 +5,7 @@ metadata:
   namespace: gitops-resources
 spec:
   destination:
-    namespace: artifactory2
+    namespace: artifactory3
     server: https://kubernetes.default.svc
   project: gitops-resources
   sources:
