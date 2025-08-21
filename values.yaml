@@ -4,6 +4,7 @@ artifactory:
     enabled: false
   containerSecurityContext:
     enabled: false
+
   artifactory:
     podSecurityContext:
       enabled: false
@@ -17,12 +18,14 @@ artifactory:
         limits:
           cpu: 200m
           memory: 256Mi
+
   nginx:
     enabled: false
     containerSecurityContext:
       enabled: false
     podSecurityContext:
       enabled: false
+
   postgresql:
     enabled: true
     auth:
@@ -34,16 +37,3 @@ artifactory:
         enabled: false
       containerSecurityContext:
         enabled: false
-  ingress:
-    enabled: true
-    hosts:
-      - path: /
-        annotations:
-          route.openshift.io/termination: edge
-          route.openshift.io/insecure-policy: Redirect
-    docker:
-      enabled: true
-      hosts:
-        - annotations:
-            route.openshift.io/termination: passthrough
-            route.openshift.io/insecure-policy: Redirect
