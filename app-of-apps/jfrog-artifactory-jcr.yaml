@@ -36,12 +36,12 @@ spec:
                 cpu: 200m
                 memory: 256Mi
 
-        nginx:
-          enabled: false
-          containerSecurityContext:
+          nginx:
             enabled: false
-          podSecurityContext:
-            enabled: false
+            containerSecurityContext:
+              enabled: false
+            podSecurityContext:
+              enabled: false
 
         postgresql:
           enabled: true
