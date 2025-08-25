@@ -18,6 +18,23 @@ artifactory:
         limits:
           cpu: 200m
           memory: 256Mi
+    customInitContainers:
+      - name: setup-artifactory
+        image: "alpine/curl:3.14"
+        command: ["/bin/sh", "-c", "/scripts/setup.sh"]
+        volumeMounts:
+          - name: setup-script
+            mountPath: /scripts
+          - name: admin-creds
+            mountPath: /etc/artifactory-creds
+    customVolumes:
+      - name: setup-script
+        configMap:
+          name: artifactory-setup-script
+          defaultMode: 0755
+      - name: admin-creds
+        secret:
+          secretName: artifactory-admin-creds
 
   nginx:
     enabled: false
