@@ -21,7 +21,7 @@ artifactory:
     customInitContainers: |
       - name: setup-artifactory
         image: "alpine/curl:3.14"
-        command: ["/bin/sh", "-c", "/scripts/setup.sh"]
+        command: ["/bin/sh", "-c", "ls /scripts"]
         volumeMounts:
           - name: setup-script
             mountPath: /scripts
