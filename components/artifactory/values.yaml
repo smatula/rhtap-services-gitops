@@ -20,7 +20,7 @@ artifactory:
           memory: 256Mi
 
   nginx:
-    enabled: false
+    enabled: true
     containerSecurityContext:
       enabled: false
     podSecurityContext:
