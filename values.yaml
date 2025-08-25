@@ -4,6 +4,7 @@ artifactory:
     enabled: false
   containerSecurityContext:
     enabled: false
+
   artifactory:
     podSecurityContext:
       enabled: false

@@ -17,43 +17,11 @@ spec:
     targetRevision: 107.117.12 # Use a specific chart version
     helm:
       releaseName: jfrog-container-registry
-      values: |
-        artifactory:
-          podSecurityContext:
-            enabled: false
-          containerSecurityContext:
-            enabled: false
-          artifactory:
-            podSecurityContext:
-              enabled: false
-            containerSecurityContext:
-              enabled: false
-            initContainers:
-              resources:
-                requests:
-                  cpu: 100m
-                  memory: 128Mi
-                limits:
-                  cpu: 200m
-                  memory: 256Mi
-
-        nginx:
-          enabled: false
-          containerSecurityContext:
-            enabled: false
-          podSecurityContext:
-            enabled: false
-
-        postgresql:
-          enabled: true
-          auth:
-            password: "a-strong-password"
-          primary:
-            podSecurityContext:
-              enabled: false
-            containerSecurityContext:
-              enabled: false
-
+      valueFiles:
+        - $values/values.yaml
+  - repoURL: https://github.com/smatula/rhtap-services-gitops
+    targetRevision: artifactory
+    ref: values
   syncPolicy:
     managedNamespaceMetadata:
       labels:
