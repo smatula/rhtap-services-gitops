@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: artifactory-setup-script
-  namespace: artifactory
+  namespace: artifactory3
 data:
   setup.sh: |
     #!/bin/bash
