@@ -7,16 +7,16 @@ data:
   setup.sh: |
     #!/bin/bash
     set -e
-    
+
     # Wait for Artifactory to be available
     echo "Waiting for Artifactory to start..."
     until $(curl -s -f -u "admin:password" "http://localhost:8081/artifactory/api/system/ping"); do
       echo "Artifactory not yet available, sleeping..."
       sleep 5
     done
-    
+
     echo "Artifactory is up. Starting configuration..."
-    
+
     # 1. Change Admin Password
     # The new password is read from the mounted secret
     NEW_PASSWORD=$(cat /etc/artifactory-creds/new-admin-password)
@@ -25,12 +25,12 @@ data:
     curl -s -f -u "admin:password" -X POST "http://localhost:8081/artifactory/api/security/users/admin/password" \
     -H "Content-Type: application/json" \
     -d "{ \"oldPassword\": \"password\", \"newPassword1\": \"${NEW_PASSWORD}\", \"newPassword2\": \"${NEW_PASSWORD}\" }"
-    
+
     echo "Admin password changed successfully."
-    
+
     # 2. Create a Local Docker Repository
     echo "Creating local Docker repository 'docker-local'..."
-    
+
     # Use the NEW password for subsequent API calls
     curl -s -f -u "admin:${NEW_PASSWORD}" -X PUT "http://localhost:8081/artifactory/api/repositories/docker-local" \
     -H "Content-Type: application/json" \
@@ -41,7 +41,7 @@ data:
       "description": "Local Docker registry",
       "dockerApiVersion": "V2"
     }'
-    
+
     echo "Docker repository 'docker-local' created successfully."
     echo "Setup complete."
 
