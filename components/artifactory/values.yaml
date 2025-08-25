@@ -1,5 +1,4 @@
 ---
-artifactory:
   podSecurityContext:
     enabled: false
   containerSecurityContext:
