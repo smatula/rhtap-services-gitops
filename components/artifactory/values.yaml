@@ -30,11 +30,10 @@ artifactory:
     enabled: true
     auth:
       password: "a-strong-password"
-    primary:
-      podSecurityContext:
-        enabled: false
-      securityContext:
-        enabled: false
-      containerSecurityContext:
-        enabled: false
+    podSecurityContext:
+      enabled: false
+    securityContext:
+      enabled: false
+    containerSecurityContext:
+      enabled: false
 
