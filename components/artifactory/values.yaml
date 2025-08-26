@@ -21,7 +21,7 @@ artifactory:
     customSidecarContainers: |
       - name: setup-artifactory
         image: "alpine/curl:3.14"
-        command: ["/bin/sh", "-c", "ls -ralt /scripts"]
+        command: ["/bin/sh", "-c", "ls -ralt /scripts;exit 0"]
         volumeMounts:
           - name: setup-script
             mountPath: /scripts
