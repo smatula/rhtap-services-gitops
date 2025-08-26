@@ -18,7 +18,7 @@ artifactory:
         limits:
           cpu: 200m
           memory: 256Mi
-    customInitContainers: |
+    extraContainers: |
       - name: setup-artifactory
         image: "alpine/curl:3.14"
         command: ["/bin/sh", "-c", "ls /scripts"]
@@ -27,7 +27,7 @@ artifactory:
             mountPath: /scripts
           - name: admin-creds
             mountPath: /etc/artifactory-creds
-    customVolumes: |
+    extraVolumes: |
       - name: setup-script
         configMap:
           name: artifactory-setup-script
