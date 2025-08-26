@@ -5,7 +5,7 @@ metadata:
     app: artifactory
     component: artifactory
   name: artifactory-docker
-  namespace: artifactory3
+  namespace: artifactory
 spec:
   port:
     targetPort: http-artifactory
@@ -22,7 +22,7 @@ metadata:
     app: artifactory
     component: artifactory
   name: artifactory-ui
-  namespace: artifactory3
+  namespace: artifactory
 spec:
   port:
     targetPort: http-router
