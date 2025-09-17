@@ -1,0 +1,47 @@
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 8081
+
+nexus:
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 2048Mi
+    limits:
+      cpu: 2000m
+      memory: 4096Mi
+
+  persistence:
+    enabled: true
+    size: 500Gi
+    name: nexus-data
+    mountPath: /nexus-data
+    accessMode: ReadWriteOnce
+
+labels:
+  app: nexus
+
+openshift:
+  enabled: true
+  ui:
+    enabled: true
+    tls:
+      termination: "edge"
+    annotations:
+      openshift.io/host.generated: "true"
+
+docker:
+  enabled: true
+  service:
+    ports:
+      - name: docker-http
+        port: 8082
+  route:
+    enabled: true
+    tls:
+      termination: "edge"
+    annotations:
+      openshift.io/host.generated: "true"
+
