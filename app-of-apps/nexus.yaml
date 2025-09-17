@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: nexus
-  namespace: namespace: gitops-resources
+  namespace: gitops-resources
 spec:
   destination:
     namespace: nexus
