@@ -10,8 +10,10 @@ spec:
   project: gitops-resources
   sources:
   - repoURL: https://sonatype.github.io/helm3-charts/
+    chart: nxrm-ha
     targetRevision: 84.0.0
     helm:
+      releaseName: nexus-service
       valueFiles:
         - $values/components/nexus/values.yaml
   - repoURL: https://github.com/smatula/rhtap-services-gitops
