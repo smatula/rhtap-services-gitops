@@ -8,17 +8,10 @@ spec:
     namespace: nexus
     server: https://kubernetes.default.svc
   project: gitops-resources
-  sources:
-  - repoURL: https://sonatype.github.io/helm3-charts/
-    chart: nxrm-ha
-    targetRevision: 84.0.0
-    helm:
-      releaseName: nexus-service
-      valueFiles:
-        - $values/components/nexus/values.yaml
-  - repoURL: https://github.com/smatula/rhtap-services-gitops
+  source:
+    path: ./components/nexus
+    repoURL: https://github.com/smatula/rhtap-services-gitops
     targetRevision: nexus
-    ref: values
   syncPolicy:
     managedNamespaceMetadata:
       labels:
