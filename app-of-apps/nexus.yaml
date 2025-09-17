@@ -8,8 +8,8 @@ spec:
     namespace: nexus
     server: https://kubernetes.default.svc
   project: gitops-resources
-  source:
-    repoURL: https://sonatype.github.io/helm3-charts/
+  sources:
+  - repoURL: https://sonatype.github.io/helm3-charts/
     targetRevision: 84.0.0
     helm:
       valueFiles:
