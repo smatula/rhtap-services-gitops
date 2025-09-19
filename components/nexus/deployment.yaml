@@ -30,4 +30,4 @@ spec:
         persistentVolumeClaim:
           claimName: nexus-data
   strategy:
-    type: Recreate
+    type: RollingUpdate
