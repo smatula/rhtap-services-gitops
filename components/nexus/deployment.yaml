@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: nexus
-        image: sonatype/nexus3:latest
+        image: sonatype/nexus3:3.79.0
         ports:
         - containerPort: 8081
           name: nexus-ui
