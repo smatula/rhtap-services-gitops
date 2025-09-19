@@ -5,7 +5,7 @@ metadata:
   name: nexus-data
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: 500Gi
