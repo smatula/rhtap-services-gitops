@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nexus
+  namespace: nexus
 spec:
   ports:
   - name: nexus-ui
@@ -10,9 +11,10 @@ spec:
     protocol: TCP
     targetPort: 8081
   - name: nexus-docker
-    port: 8082 #  Docker Registry Port
+    port: 8082
     protocol: TCP
     targetPort: 8082
   selector:
     app: nexus
   type: ClusterIP
+

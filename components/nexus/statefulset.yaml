@@ -1,6 +1,6 @@
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: nexus
   namespace: nexus
@@ -16,18 +16,22 @@ spec:
     spec:
       containers:
       - name: nexus
-        image: sonatype/nexus3:latest
+        image: sonatype/nexus3:3.84.1
         ports:
         - containerPort: 8081
           name: nexus-ui
-        - containerPort: 8082 #Docker Registry Port (you can configure in Nexus later)
+        - containerPort: 8082
           name: nexus-docker
         volumeMounts:
         - mountPath: /nexus-data
           name: nexus-data
-      volumes:
-      - name: nexus-data
-        persistentVolumeClaim:
-          claimName: nexus-data
-  strategy:
-    type: RollingUpdate
+  volumeClaimTemplates:
+  - metadata:
+      name: nexus-data
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 500Gi
+

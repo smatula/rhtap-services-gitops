@@ -2,9 +2,10 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
+  name: nexus-ui
+  namespace: nexus
   annotations:
     openshift.io/host.generated: "true"
-  name: nexus-ui
 spec:
   port:
     targetPort: nexus-ui
@@ -15,3 +16,4 @@ spec:
     name: nexus
     weight: 100
   wildcardPolicy: None
+
