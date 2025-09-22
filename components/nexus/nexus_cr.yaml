@@ -1,0 +1,129 @@
+# nexus-statefulset.yaml
+#
+# This file defines a complete Nexus Repository deployment using a StatefulSet,
+# which is more suitable for stateful applications like Nexus.
+# It ensures a stable network identity and consistent persistent storage.
+# The original manifests (Deployment, Service, PVC, Routes) have been
+# consolidated and converted to this StatefulSet-centric approach.
+
+---
+# StatefulSet for the Nexus Repository application.
+# It manages the deployment and scaling of a set of Pods,
+# guaranteeing a stable network identity and consistent storage.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nexus
+  namespace: nexus
+spec:
+  # The number of desired instances of the Pod.
+  # For Nexus, a single replica is often sufficient for non-HA setups.
+  replicas: 1
+  # The selector ensures the StatefulSet manages only the Pods with this label.
+  selector:
+    matchLabels:
+      app: nexus
+  # This template defines the Pods managed by the StatefulSet.
+  template:
+    metadata:
+      labels:
+        app: nexus
+    spec:
+      containers:
+      # The main container for the Nexus application.
+      - name: nexus
+        image: sonatype/nexus3:3.79.0
+        ports:
+        # Port for the main Nexus UI.
+        - containerPort: 8081
+          name: nexus-ui
+        # Port for the Docker Registry.
+        - containerPort: 8082
+          name: nexus-docker
+        volumeMounts:
+        # Mount the persistent volume at the Nexus data directory.
+        - mountPath: /nexus-data
+          name: nexus-data
+  # This section automatically provisions PersistentVolumes for each Pod.
+  volumeClaimTemplates:
+  - metadata:
+      name: nexus-data
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 500Gi
+
+---
+# Service to expose the Nexus Pods.
+# A ClusterIP service is used for stable internal routing.
+# The StatefulSet's Pods can be addressed by their hostname (e.g., nexus-0).
+apiVersion: v1
+kind: Service
+metadata:
+  name: nexus
+  namespace: nexus
+spec:
+  ports:
+  - name: nexus-ui
+    port: 8081
+    protocol: TCP
+    targetPort: 8081
+  - name: nexus-docker
+    port: 8082
+    protocol: TCP
+    targetPort: 8082
+  selector:
+    app: nexus
+  type: ClusterIP
+
+---
+# OpenShift Route for the Nexus UI.
+# This exposes the Service externally with a generated hostname.
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: nexus-ui
+  namespace: nexus
+  annotations:
+    openshift.io/host.generated: "true"
+spec:
+  port:
+    targetPort: nexus-ui
+  tls:
+    termination: edge
+  to:
+    kind: Service
+    name: nexus
+    weight: 100
+  wildcardPolicy: None
+
+---
+# OpenShift Route for the Docker Registry.
+# This exposes the Docker port of the Service externally.
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: nexus-docker
+  namespace: nexus
+  annotations:
+    openshift.io/host.generated: "true"
+spec:
+  port:
+    targetPort: nexus-docker
+  tls:
+    termination: edge
+  to:
+    kind: Service
+    name: nexus
+    weight: 100
+  wildcardPolicy: None
+
+---
+# Define a Namespace for the deployment.
+# This is a good practice for organizing resources.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nexus
