@@ -32,7 +32,7 @@ spec:
       containers:
       # The main container for the Nexus application.
       - name: nexus
-        image: sonatype/nexus3:3.79.0
+        image: sonatype/nexus3:latest
         ports:
         # Port for the main Nexus UI.
         - containerPort: 8081
