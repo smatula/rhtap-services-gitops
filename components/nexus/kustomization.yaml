@@ -3,7 +3,6 @@ kind: Kustomization
 commonAnnotations:
   argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 resources:
-  - namespace.yaml
   - statefulset.yaml
   - service.yaml
   - route-nexus-ui.yaml
