@@ -2,7 +2,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - minio-helm-standalone.yaml
+  - minio-operator-install.yaml
+  - minio-tenant.yaml
   - postgres-keycloak.yaml
   - keycloak-instance.yaml
   - tpa-release.yaml
