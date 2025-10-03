@@ -8,8 +8,8 @@ metadata:
 spec:
   project: openshift-gitops
   source:
-    repoURL: https://operator.minio/
-    targetRevision: stable
+    repoURL: https://operator.min.io/
+    targetRevision: 7.1.1
     chart: operator 
   destination:
     server: https://kubernetes.default.svc
