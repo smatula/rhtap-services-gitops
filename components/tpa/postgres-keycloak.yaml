@@ -1,0 +1,55 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: postgres-operator
+  namespace: tpa-project
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  channel: stable
+  name: postgresql-operator
+  source: certified-operators
+  sourceNamespace: openshift-marketplace
+  installPlanApproval: Automatic
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: keycloak-operator
+  namespace: tpa-project
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  channel: stable
+  name: rhbk-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+  installPlanApproval: Automatic
+---
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: kc-postgres
+  namespace: tpa-project
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  postgresVersion: 16
+  image: "registry.redhat.io/rhel9/postgresql-16:latest" 
+  dataVolumeClaimSpec: { accessModes: ["ReadWriteOnce"], resources: { requests: { storage: 20Gi } } }
+  instances: [{ name: kc-instance, replicas: 1 }]
+  users: [{ name: kcuser, databases: [ keycloakdb ], password: {} }]
+---
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: tpa-postgres
+  namespace: tpa-project
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  postgresVersion: 16
+  image: "registry.redhat.io/rhel9/postgresql-16:latest" 
+  dataVolumeClaimSpec: { accessModes: ["ReadWriteOnce"], resources: { requests: { storage: 50Gi } } }
+  instances: [{ name: tpa-instance, replicas: 1 }]
+  users: [{ name: tpa-user, databases: [ tpa-db ], password: {} }]

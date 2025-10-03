@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minio-operator-install
+  namespace: openshift-gitops 
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: openshift-gitops
+  source:
+    repoURL: https://operator.minio/
+    targetRevision: stable
+    chart: operator 
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: minio-operator
+  syncPolicy:
+    automated: { prune: true, selfHeal: true }
+    syncOptions:
+      - CreateNamespace=true

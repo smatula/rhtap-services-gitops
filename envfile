@@ -2,8 +2,21 @@
 ## Obtain from https://console.redhat.com/openshift
 ## Mandatory
 # export PULL_SECRET='{"auths":{"cloud.openshift.com":{"auth":"=","email":"my@email.com"},"quay.io":{"auth":"=","email":"my@email.com"},"registry.connect.redhat.com":{"auth":"","email":"my@email.com"},"registry.redhat.io":{"auth":"","email":"my@email.com"}}}'
-export PULL_SECRET=
+#export PULL_SECRET=
+
+# TPA
+export TPA_NAMESPACE="tpa-project"
+export APP_DOMAIN_URL=-$TPA_NAMESPACE.$(oc -n openshift-ingress-operator get ingresscontrollers.operator.openshift.io default -o jsonpath='{.status.domain}')
+
 
 # rhtap-services AWS
-export AWS_ACCESS_KEY_ID=
-export AWS_SECRET_ACCESS_KEY=
+#export AWS_ACCESS_KEY_ID=
+#export AWS_SECRET_ACCESS_KEY=
+
+# TPA - Set passwords
+export TPA_USER_DB_PASS="<TPA_USER_DB_PASSWORD>"
+export PG_ADMIN_PASS="<PG_ADMIN_PASSWORD>"
+export MINIO_ACCESS_KEY="<YOUR_MINIO_ACCESS_KEY>"
+export MINIO_SECRET_KEY="<YOUR_MINIO_SECRET_KEY>"
+export OIDC_CLIENT_SECRET="<YOUR_OIDC_CLIENT_SECRET>"
+
