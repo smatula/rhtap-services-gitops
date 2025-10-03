@@ -1,4 +1,4 @@
-apiVersion: minio.minio/v2
+apiVersion: minio.min.io/v2
 kind: Tenant
 metadata:
   name: minio-tpa-storage
@@ -8,7 +8,9 @@ metadata:
 spec:
   credsSecret:
     name: storage-credentials 
-  
+
+  image: quay.io/minio/operator:v5.0.18
+
   pools:
     - name: pool-0
       servers: 4 
