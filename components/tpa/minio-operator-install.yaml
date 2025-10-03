@@ -2,11 +2,11 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: minio-operator-install
-  namespace: openshift-gitops 
+  namespace:  gitops-resources
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
-  project: openshift-gitops
+  project: gitops-resources
   source:
     repoURL: https://operator.min.io/
     targetRevision: 7.1.1

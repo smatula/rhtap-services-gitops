@@ -2,11 +2,11 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: trusted-profile-analyzer
-  namespace: openshift-gitops
+  namespace: gitops-resources
   annotations:
     argocd.argoproj.io/sync-wave: "6"
 spec:
-  project: openshift-gitops
+  project: gitops-resources 
   source:
     repoURL: https://charts.openshift.io/
     targetRevision: 1.1.1
