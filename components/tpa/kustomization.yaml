@@ -3,8 +3,9 @@ kind: Kustomization
 commonAnnotations:
   argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 resources:
-  - minio-operator-install.yaml
-  - minio-tenant.yaml
+  - odf-subscription.yaml
+  - odf-cluster.yaml
+  - odf-objectbucketclaim.yaml
   - postgres-keycloak.yaml
   - keycloak-instance.yaml
   - tpa-release.yaml

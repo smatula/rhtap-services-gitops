@@ -6,12 +6,11 @@ source ./envfile
 #oc new-project hive
 #oc new-project artifactory
 oc new-project ${TPA_NAMESPACE}
-oc new-project minio-operator
 
 # TPA - Grant Security Context Constraints (SCCs): Grant the non-root MinIO and PostgreSQL components the ability to run in the application namespaces.
-oc adm policy add-scc-to-user anyuid -z default -n minio-operator
+#oc adm policy add-scc-to-user anyuid -z default -n minio-operator
 #oc adm policy add-scc-to-user anyuid -z minio-operator -n minio-operator
-oc adm policy add-scc-to-user anyuid -z default -n ${TPA_NAMESPACE}
+#oc adm policy add-scc-to-user anyuid -z default -n ${TPA_NAMESPACE}
 
 # Secret 1: TPA DB Connection Details (postgresql-credentials)
 oc create secret generic postgresql-credentials -n ${TPA_NAMESPACE} \
@@ -28,11 +27,6 @@ oc create secret generic postgresql-admin-credentials -n ${TPA_NAMESPACE} \
   --from-literal=db.name='tpa-db' \
   --from-literal=db.user='postgres' \
   --from-literal=db.password=${PG_ADMIN_PASS}
-
-# Secret 3: MinIO Storage Credentials (storage-credentials)
-oc create secret generic storage-credentials -n ${TPA_NAMESPACE} \
-  --from-literal=user=${MINIO_ACCESS_KEY} \
-  --from-literal=password=${MINIO_SECRET_KEY}
 
 # Secret 4: OIDC Client Secret (oidc-cli)
 oc create secret generic oidc-cli -n ${TPA_NAMESPACE} \

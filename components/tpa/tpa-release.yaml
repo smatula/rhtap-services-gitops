@@ -22,12 +22,13 @@ spec:
 
         storage:
           type: s3
-          region: http://minio-tpa-storage-hl.tpa-project.svc.cluster.local:9000
+          region: https://s3.openshift-storage.svc:443 
           bucket: trustify-tpa-data-001
+
           accessKey:
-            valueFrom: { secretKeyRef: { name: storage-credentials, key: user } }
+            valueFrom: { secretKeyRef: { name: tpa-data-bucket-claim, key: AWS_ACCESS_KEY_ID } }
           secretKey:
-            valueFrom: { secretKeyRef: { name: storage-credentials, key: password } }
+            valueFrom: { secretKeyRef: { name: tpa-data-bucket-claim, key: AWS_SECRET_ACCESS_KEY } }
 
         database:
           sslMode: require
