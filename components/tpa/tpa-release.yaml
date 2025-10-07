@@ -4,7 +4,7 @@ metadata:
   name: trusted-profile-analyzer
   namespace: gitops-resources
   annotations:
-    argocd.argoproj.io/sync-wave: "6"
+    argocd.argoproj.io/sync-wave: "3"
 spec:
   project: gitops-resources 
   source:
@@ -13,6 +13,9 @@ spec:
     chart: redhat-trusted-profile-analyzer
     helm:
       values: |
+        replicas: 1
+        openshift: &tpaOpenShift
+          useServiceCa: true
         appDomain: "${APP_DOMAIN_URL}"
 
         ingress:
@@ -20,18 +23,12 @@ spec:
           additionalAnnotations:
             "haproxy.router.openshift.io/timeout": "5m"
 
-        storage:
-          type: s3
-          region: https://s3.openshift-storage.svc:443 
-          bucket: trustify-tpa-data-001
-
-          accessKey:
-            valueFrom: { secretKeyRef: { name: tpa-data-bucket-claim, key: AWS_ACCESS_KEY_ID } }
-          secretKey:
-            valueFrom: { secretKeyRef: { name: tpa-data-bucket-claim, key: AWS_SECRET_ACCESS_KEY } }
+        storage: &tpaStorage
+          type: filesystem
+          size: 100Gi
 
         database:
-          sslMode: require
+          sslMode: disable
           host: { valueFrom: { secretKeyRef: { name: postgresql-credentials, key: db.host } } }
           port: { valueFrom: { secretKeyRef: { name: postgresql-credentials, key: db.port } } }
           name: { valueFrom: { secretKeyRef: { name: postgresql-credentials, key: db.name } } }

@@ -3,9 +3,6 @@ kind: Kustomization
 commonAnnotations:
   argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 resources:
-  - odf-subscription.yaml
-  - odf-cluster.yaml
-  - odf-objectbucketclaim.yaml
   - postgres-keycloak.yaml
   - keycloak-instance.yaml
   - tpa-release.yaml
