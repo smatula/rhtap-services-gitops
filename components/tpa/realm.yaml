@@ -1107,7 +1107,7 @@ spec:
         bearerOnly: false
         clientAuthenticatorType: client-secret
         clientId: testing-manager
-        secret: eG9YMXJSazAtbURDWS1sYjJrLTJhTkktcW40UWIxQ0V1R0RnCg==
+        secret: aGVmaXNoU2ItazBwRS1mRUpuLWU0VlgteUZyVmdVSGkzR29oCg==
         consentRequired: false
         defaultClientScopes:
           - web-origins
@@ -1179,7 +1179,7 @@ spec:
         bearerOnly: false
         clientAuthenticatorType: client-secret
         clientId: testing-user
-        secret: eVpkODduQ2QtekpBRy11U25TLW5lYTgteXJyZmJUQml4ZE81Cg==
+        secret: djl4anRxcDMtRFVTNS1DVmNuLWpFRlctNVh4OVJHa3kzM0ZHCg==
         consentRequired: false
         defaultClientScopes:
           - web-origins
@@ -1249,7 +1249,7 @@ spec:
         bearerOnly: false
         clientAuthenticatorType: client-secret
         clientId: cli
-        secret: WmliWVJ2bW4tcWRnWi13Rll3LXFRckYtdGUxcXc4QVExM0ZYCg==
+        secret: dk9JMVZqSzEtNVRyNy1oQnJGLWJLTDUtY0ZkZVNrc2pWZlJaCg==
         consentRequired: false
         defaultClientScopes:
           - web-origins
@@ -1792,7 +1792,7 @@ spec:
       - username: admin
         credentials:
           - type: password
-            value: TWswRWtqRHJUb2doNjFxdAo=
+            value: ZjBxVEtXMzZsU3dRazZaZAo=
             temporary: false
         disableableCredentialTypes: []
         emailVerified: false
