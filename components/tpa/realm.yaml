@@ -1107,7 +1107,7 @@ spec:
         bearerOnly: false
         clientAuthenticatorType: client-secret
         clientId: testing-manager
-        secret: aGVmaXNoU2ItazBwRS1mRUpuLWU0VlgteUZyVmdVSGkzR29oCg==
+        secret: MANAGER_SECRET_PLACEHOLDER
         consentRequired: false
         defaultClientScopes:
           - web-origins
@@ -1179,7 +1179,7 @@ spec:
         bearerOnly: false
         clientAuthenticatorType: client-secret
         clientId: testing-user
-        secret: djl4anRxcDMtRFVTNS1DVmNuLWpFRlctNVh4OVJHa3kzM0ZHCg==
+        secret: USER_SECRET_PLACEHOLDER
         consentRequired: false
         defaultClientScopes:
           - web-origins
@@ -1249,7 +1249,7 @@ spec:
         bearerOnly: false
         clientAuthenticatorType: client-secret
         clientId: cli
-        secret: dk9JMVZqSzEtNVRyNy1oQnJGLWJLTDUtY0ZkZVNrc2pWZlJaCg==
+        secret: CLI_SECRET_PLACEHOLDER
         consentRequired: false
         defaultClientScopes:
           - web-origins
@@ -1792,7 +1792,7 @@ spec:
       - username: admin
         credentials:
           - type: password
-            value: ZjBxVEtXMzZsU3dRazZaZAo=
+            value: PASS_PLACEHOLDER
             temporary: false
         disableableCredentialTypes: []
         emailVerified: false

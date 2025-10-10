@@ -16,7 +16,7 @@ spec:
         replicas: 1
         openshift: &tpaOpenShift
           useServiceCa: true
-        appDomain: -tssc-tpa.apps.cluster-bbd8k.bbd8k.sandbox5159.opentlc.com
+        appDomain: APP_DOMAIN_URL_PLACEHOLDER
         collector: {}
         ingress:
           className: openshift-default
@@ -91,7 +91,7 @@ spec:
           enabled: false
 
         oidc: &tpaOIDC
-          issuerUrl: https://sso.apps.cluster-bbd8k.bbd8k.sandbox5159.opentlc.com/realms/chicken
+          issuerUrl: OIDC_ISSUER_URL_PLACEHOLDER
           clients:
             frontend:
               clientId: frontend

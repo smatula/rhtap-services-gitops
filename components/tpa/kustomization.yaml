@@ -9,3 +9,84 @@ resources:
   - keycloak-instance.yaml
   - realm.yaml
   - tpa-release.yaml
+replacements:
+  # ------------------------------------------------------------------
+  # REPLACEMENT 1: Inject Static Hostname into the Keycloak Route
+  # ------------------------------------------------------------------
+  - source:
+      kind: Secret
+      name: tpa-injection-config
+      fieldPath: data.external_host
+    targets:
+      - select:
+          kind: Route
+          name: keycloak
+        fieldPaths:
+          - spec.host
+      - select:
+          kind: Keycloak
+          name: keycloak
+        fieldPaths:
+          - spec.hostname.hostname
+  - source:
+      kind: Secret
+      name: tpa-injection-config
+      fieldPath: data.app_domain_url
+      # group: v1
+    targets:
+      - select:
+          kind: Application
+          name: trusted-profile-analyzer
+        fieldPaths:
+          - spec.source.helm.values.appDomain
+  - source:
+      kind: Secret
+      name: tssc-trustification-integration
+      fieldPath: data.oidc_issuer_url
+    targets:
+      - select:
+          kind: Application
+          name: trusted-profile-analyzer
+        fieldPaths:
+          - spec.source.helm.values.oidc.issuerUrl
+  - source:
+      kind: Secret
+      name: tpa-injection-config
+      fieldPath: data.manager
+    targets:
+      - select:
+          kind: KeycloakRealmImport
+          name: keycloak
+        fieldPaths:
+          - spec.realm.clients[7].credentials[0].value
+  - source:
+      kind: Secret
+      name: tpa-injection-config
+      fieldPath: data.user
+    targets:
+      - select:
+          kind: KeycloakRealmImport
+          name: keycloak
+        fieldPaths:
+          - spec.realm.clients[8].credentials[0].value
+  - source:
+      kind: Secret
+      name: tpa-injection-config
+      fieldPath: data.cli
+    targets:
+      - select:
+          kind: KeycloakRealmImport
+          name: keycloak
+        fieldPaths:
+          - spec.realm.clients[9].credentials[0].value
+  - source:
+      kind: Secret
+      name: tpa-injection-config
+      fieldPath: data.pass
+    targets:
+      - select:
+          kind: KeycloakRealmImport
+          name: keycloak
+        fieldPaths:
+          - spec.realm.users[0].credentials[0].value
+
