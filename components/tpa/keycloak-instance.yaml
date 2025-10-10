@@ -9,11 +9,7 @@ metadata:
   namespace: tssc-keycloak
   name: keycloak
 spec:
-  host:
-    valueFrom:
-      secretKeyRef:
-        name: tssc-trustification-integration
-        key: host
+  host: sso.apps.rosa.er7ef-gzcng-f4n.ohpr.p3.openshiftapps.com
   to:
     kind: Service
     name: keycloak
@@ -62,7 +58,7 @@ metadata:
   labels:
     app: keycloak
   namespace: tssc-keycloak
-  name: keycloak 
+  name: keycloak
 spec:
   instances: 1
   additionalOptions:
@@ -81,11 +77,7 @@ spec:
       name: keycloak-pgsql-user
       key: password
   hostname:
-    hostname:
-      valueFrom:
-        secretKeyRef:
-          name: tssc-trustification-integration
-          key: host
+    hostname: sso.apps.rosa.er7ef-gzcng-f4n.ohpr.p3.openshiftapps.com
     strict: false
     strictBackchannel: false
   http:
@@ -93,4 +85,3 @@ spec:
     tlsSecret: keycloak-tls
   ingress:
     enabled: false
-
