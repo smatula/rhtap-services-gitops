@@ -16,6 +16,8 @@ spec:
       parameters:
         - name: KEYCLOAK_HOSTNAME
           value: sso.apps.cluster-hxfbn.hxfbn.sandbox1576.opentlc.com
+        - name: TMP_STRING
+          value: 2O40Ls1rJ7kdEqRo
   - repoURL: https://charts.openshift.io/
     targetRevision: 1.1.1
     chart: redhat-trusted-profile-analyzer

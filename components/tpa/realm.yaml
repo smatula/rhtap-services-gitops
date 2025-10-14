@@ -1802,11 +1802,7 @@ spec:
         credentials:
           - type: password
             temporary: false
-            value:
-              valueFrom:
-                secretKeyRef:
-                  name: tpa-realm-chicken-admin
-                  key: password
+            value: PASSWORD_PLACEHOLDER
         disableableCredentialTypes: []
         emailVerified: false
         enabled: true

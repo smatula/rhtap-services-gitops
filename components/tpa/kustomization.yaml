@@ -6,9 +6,8 @@ configMapGenerator:
   - name: tpa-values-source
     namespace: tssc-tpa
     literals:
-      - APP_DOMAIN_URL=placeholder-app-domain-url.com
-      - OIDC_ISSUER_URL=placeholder-oidc-issuer-url.com
       - KEYCLOAK_HOSTNAME=placeholder-initial-host.com
+      - TMP_STRING=placeholder
 resources:
   - namespaces.yaml
   - subscription.yaml
@@ -37,21 +36,11 @@ replacements:
   - source:
       kind: ConfigMap
       name: tpa-values-source
-      fieldPath: data.APP_DOMAIN_URL
+      fieldPath: data.TMP_STRING
     targets:
       - select:
-          kind: Application
-          name: trusted-profile-analyzer
+          kind: KeycloakRealmImport
+          name: keycloak-chicken
         fieldPaths:
-          - spec.source.helm.values.appDomain
-  - source:
-      kind: ConfigMap
-      name: tpa-values-source
-      fieldPath: data.OIDC_ISSUER_URL
-    targets:
-      - select:
-          kind: Application
-          name: trusted-profile-analyzer
-        fieldPaths:
-          - spec.source.helm.values.oidc.issuerUrl
+          - spec.realm.users[0].credentials[0].value
 
