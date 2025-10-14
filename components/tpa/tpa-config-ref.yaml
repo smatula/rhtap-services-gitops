@@ -1,6 +1,0 @@
-# components/tpa/tpa-config-ref.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: tpa-injection-config
-  namespace: tssc-tpa

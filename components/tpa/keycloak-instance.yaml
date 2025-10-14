@@ -9,7 +9,7 @@ metadata:
   namespace: tssc-keycloak
   name: keycloak
 spec:
-  host: KEYCLOAK_ROUTE_HOST_PLACEHOLDER
+  host: $(KEYCLOAK_HOST_VAR)
   to:
     kind: Service
     name: keycloak

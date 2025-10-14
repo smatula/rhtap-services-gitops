@@ -12,6 +12,14 @@ spec:
     path: ./components/tpa
     repoURL: https://github.com/smatula/rhtap-services-gitops
     targetRevision: tpa
+    kustomize:
+      parameters:
+        - name: KEYCLOAK_HOSTNAME
+          value: KEYCLOAK_PLACEHOLDER
+        - name: APP_DOMAIN_URL
+          value: APP_DOMAIN_PLACEHOLDER
+        - name: OIDC_ISSUER_URL
+          value: OIDC_ISSUER_PLACEHOLDER
   syncPolicy:
     managedNamespaceMetadata:
       labels:

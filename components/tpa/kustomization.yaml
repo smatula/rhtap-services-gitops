@@ -2,10 +2,16 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 commonAnnotations:
   argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+configMapGenerator:
+  - name: tpa-values-source
+    behavior: replace
+    literals:
+      - APP_DOMAIN_URL=placeholder-app-domain-url.com
+      - OIDC_ISSUER_URL=placeholder-oidc-issuer-url.com
+      - KEYCLOAK_HOSTNAME=placeholder-initial-host.com
 resources:
   - namespaces.yaml
   - subscription.yaml
-  - tpa-config-ref.yaml 
   - infrastructure.yaml
   - keycloak-instance.yaml
   - realm.yaml
@@ -16,8 +22,8 @@ replacements:
   # ------------------------------------------------------------------
   - source:
       kind: ConfigMap
-      name: tpa-injection-config
-      fieldPath: data.external_host
+      name: tpa-values-source
+      fieldPath: data.KEYCLOAK_HOSTNAME
     targets:
       - select:
           kind: Route
@@ -31,9 +37,8 @@ replacements:
           - spec.hostname.hostname
   - source:
       kind: ConfigMap
-      name: tpa-injection-config
-      fieldPath: data.app_domain_url
-      # group: v1
+      name: tpa-values-source
+      fieldPath: data.APP_DOMAIN_URL
     targets:
       - select:
           kind: Application
@@ -42,52 +47,12 @@ replacements:
           - spec.source.helm.values.appDomain
   - source:
       kind: ConfigMap
-      name: tpa-injection-config
-      fieldPath: data.oidc_issuer_url
+      name: tpa-values-source
+      fieldPath: data.OIDC_ISSUER_URL
     targets:
       - select:
           kind: Application
           name: trusted-profile-analyzer
         fieldPaths:
           - spec.source.helm.values.oidc.issuerUrl
-  - source:
-      kind: ConfigMap
-      name: tpa-injection-config
-      fieldPath: data.manager
-    targets:
-      - select:
-          kind: KeycloakRealmImport
-          name: keycloak
-        fieldPaths:
-          - spec.realm.clients[7].credentials[0].value
-  - source:
-      kind: ConfigMap
-      name: tpa-injection-config
-      fieldPath: data.user
-    targets:
-      - select:
-          kind: KeycloakRealmImport
-          name: keycloak
-        fieldPaths:
-          - spec.realm.clients[8].credentials[0].value
-  - source:
-      kind: ConfigMap
-      name: tpa-injection-config
-      fieldPath: data.cli
-    targets:
-      - select:
-          kind: KeycloakRealmImport
-          name: keycloak
-        fieldPaths:
-          - spec.realm.clients[9].credentials[0].value
-  - source:
-      kind: ConfigMap
-      name: tpa-injection-config
-      fieldPath: data.pass
-    targets:
-      - select:
-          kind: KeycloakRealmImport
-          name: keycloak
-        fieldPaths:
-          - spec.realm.users[0].credentials[0].value
 
