@@ -4,6 +4,7 @@ commonAnnotations:
   argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 configMapGenerator:
   - name: tpa-values-source
+    namespace: tssc-tpa
     behavior: replace
     literals:
       - APP_DOMAIN_URL=placeholder-app-domain-url.com
