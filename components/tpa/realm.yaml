@@ -1802,7 +1802,7 @@ spec:
         credentials:
           - type: password
             temporary: false
-            value: PASSWORD_PLACEHOLDER
+            value: $(SEED_STRING)
         disableableCredentialTypes: []
         emailVerified: false
         enabled: true
