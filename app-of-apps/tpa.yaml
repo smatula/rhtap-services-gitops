@@ -15,7 +15,7 @@ spec:
     kustomize:
       parameters:
         - name: KEYCLOAK_HOSTNAME
-          value: sso.apps.cluster-nlqdc.nlqdc.sandbox740.opentlc.com
+          value: sso
         - name: SEED_STRING
           value: oyVHvG2cgySdlc5K
         - name: APP_DOMAIN_URL
