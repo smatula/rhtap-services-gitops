@@ -4,7 +4,14 @@ commonAnnotations:
   argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 vars:
   - name: KEYCLOAK_HOSTNAME
+    objref:
+      kind: Route
+      name: keycloak
+      apiVersion: route.openshift.io/v1
   - name: SEED_STRING 
+      kind: KeycloakRealmImport
+      name: keycloak-chicken
+      apiVersion: k8s.keycloak.org/v2alpha1
   - name: APP_DOMAIN_URL
     objref:
       kind: Application
