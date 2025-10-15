@@ -9,6 +9,7 @@ vars:
       name: keycloak
       apiVersion: route.openshift.io/v1
   - name: SEED_STRING 
+    objref:
       kind: KeycloakRealmImport
       name: keycloak-chicken
       apiVersion: k8s.keycloak.org/v2alpha1
