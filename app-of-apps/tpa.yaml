@@ -8,30 +8,20 @@ spec:
     server: https://kubernetes.default.svc
     namespace: tssc-tpa
   project: gitops-resources
-  sources:
-    - repoURL: https://github.com/smatula/rhtap-services-gitops
-      path: ./components/tpa
-      targetRevision: tpa
-      kustomize:
-        parameters:
-          - name: KEYCLOAK_HOSTNAME
-            value: sso.apps.cluster-nlqdc.nlqdc.sandbox740.opentlc.com
-          - name: SEED_STRING
-            value: oyVHvG2cgySdlc5K
-    - repoURL: https://charts.openshift.io/
-      targetRevision: 1.1.1
-      chart: redhat-trusted-profile-analyzer
-      helm:
-        parameters:
-          - name: appDomain
-            value: -tssc-tpa.apps.cluster-nlqdc.nlqdc.sandbox740.opentlc.com
-          - name: oidc.issuerUrl
-            value: https://sso.apps.cluster-nlqdc.nlqdc.sandbox740.opentlc.com/realms/chicken
-        valueFiles:
-          - $values/components/tpa/values.yaml
-    - repoURL: https://github.com/smatula/rhtap-services-gitops
-      targetRevision: tpa
-      ref: values
+  source:
+    repoURL: https://github.com/smatula/rhtap-services-gitops
+    path: ./components/tpa
+    targetRevision: tpa
+    kustomize:
+      parameters:
+        - name: KEYCLOAK_HOSTNAME
+          value: sso.apps.cluster-nlqdc.nlqdc.sandbox740.opentlc.com
+        - name: SEED_STRING
+          value: oyVHvG2cgySdlc5K
+        - name: APP_DOMAIN_URL
+          value: -tssc-tpa.apps.cluster-nlqdc.nlqdc.sandbox740.opentlc.com
+        - name: OIDC_ISSUER_URL
+          value: https://sso.apps.cluster-nlqdc.nlqdc.sandbox740.opentlc.com/realms/chicken
   syncPolicy:
     managedNamespaceMetadata:
       labels:
