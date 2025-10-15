@@ -6,7 +6,15 @@ vars:
   - name: KEYCLOAK_HOSTNAME
   - name: SEED_STRING 
   - name: APP_DOMAIN_URL
+    objref:
+      kind: Application
+      name: trusted-profile-analyzer
+      apiVersion: argoproj.io/v1alpha1
   - name: OIDC_ISSUER_URL
+    objref:
+      kind: Application
+      name: trusted-profile-analyzer
+      apiVersion: argoproj.io/v1alpha1
 resources:
   - namespaces.yaml
   - subscription.yaml
