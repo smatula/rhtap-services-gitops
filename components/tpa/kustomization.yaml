@@ -13,7 +13,7 @@ configMapGenerator:
       - REDIRECT_URI2=https://server-tssc-tpa.apps.cluster-t6h8v.t6h8v.sandbox2106.opentlc.com/*
       - REDIRECT_URI3=https://sbom-tssc-tpa.apps.cluster-t6h8v.t6h8v.sandbox2106.opentlc.com
       - REDIRECT_URI4=https://sbom-tssc-tpa.apps.cluster-t6h8v.t6h8v.sandbox2106.opentlc.com/*
-      - SEED_STRING=SEED_PLACEHOLDER
+      - SEED_STRING=hAiuqC6svLFPmv7Q
 resources:
   - namespaces.yaml
   - subscription.yaml
