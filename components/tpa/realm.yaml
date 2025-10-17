@@ -1802,7 +1802,7 @@ spec:
         credentials:
           - type: password
             temporary: false
-            value: nA1wo7BbjwU58KpO
+            value: o4XtIMkNyCFYtIMV
         disableableCredentialTypes: []
         emailVerified: false
         enabled: true
