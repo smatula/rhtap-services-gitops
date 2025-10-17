@@ -58,24 +58,6 @@ data:
   password: $REALM_ADMIN_PASS_B64
 EOF
 
-# Add Realm admin secret to KEYCLOAK namespace
-# Needed for placeholder substitution
-cat <<EOF | oc apply -f - -n $KEYCLOAK_NAMESPACE
-apiVersion: v1
-kind: Secret
-metadata:
-  annotations:
-    helm.sh/resource-policy: keep
-  labels:
-    app: keycloak
-  namespace: $KEYCLOAK_NAMESPACE
-  name: tpa-realm-chicken-admin
-type: Opaque
-stringData:
-  username: admin
-  password: $SEED_STRING
-EOF
-
 # Secret 4: OIDC Client Secrets (oidc cli, manager, user)
 cat <<EOF | oc apply -f - -n $TPA_NAMESPACE
 apiVersion: v1
