@@ -9,13 +9,6 @@ oc new-project ${TPA_NAMESPACE}
 oc new-project rhbk-operator
 oc new-project tssc-keycloak
 
-# Create secrets
-echo "Creating Pull Secret"
-oc create secret generic global-pull-secret --type=kubernetes.io/dockerconfigjson --from-literal=.dockerconfigjson="$PULL_SECRET" -n hive
-
-echo "Creating AWS creds secret"
-oc create secret generic hive-aws-creds -n hive --from-literal=aws_access_key_id="$AWS_ACCESS_KEY_ID" --from-literal=aws_secret_access_key="$AWS_SECRET_ACCESS_KEY"
-
 # Create secrets for TPA
 # Secret 1: TPA DB Connection Details 
 cat <<EOF | oc apply -f - -n $TPA_NAMESPACE
@@ -66,24 +59,6 @@ data:
   password: $REALM_ADMIN_PASS_B64
 EOF
 
-# Add Realm admin secret to KEYCLOAK namespace
-# Needed for placeholder substitution
-cat <<EOF | oc apply -f - -n $KEYCLOAK_NAMESPACE
-apiVersion: v1
-kind: Secret
-metadata:
-  annotations:
-    helm.sh/resource-policy: keep
-  labels:
-    app: keycloak
-  namespace: $KEYCLOAK_NAMESPACE
-  name: tpa-realm-chicken-admin
-type: Opaque
-data:
-  username: $REALM_USER_B64
-  password: $REALM_ADMIN_PASS_B64
-EOF
-
 # Secret 4: OIDC Client Secrets (oidc cli, manager, user)
 cat <<EOF | oc apply -f - -n $TPA_NAMESPACE
 apiVersion: v1
@@ -126,7 +101,18 @@ EOF
 yq -i '(.configMapGenerator[].literals[] | select(test("^APP_DOMAIN_URL="))) |= "APP_DOMAIN_URL=" + env(APP_DOMAIN_URL)' ./components/tpa/kustomization.yaml
 yq -i '(.configMapGenerator[].literals[] | select(test("^OIDC_ISSUER_URL="))) |= "OIDC_ISSUER_URL=" + env(OIDC_ISSUER_URL)' ./components/tpa/kustomization.yaml
 yq -i '(.configMapGenerator[].literals[] | select(test("^KEYCLOAK_HOSTNAME="))) |= "KEYCLOAK_HOSTNAME=" + env(KEYCLOAK_HOST)' ./components/tpa/kustomization.yaml
+yq -i '(.configMapGenerator[].literals[] | select(test("^REDIRECT_URI1="))) |= "REDIRECT_URI1=https://server" + env(APP_DOMAIN_URL)' ./components/tpa/kustomization.yaml
+yq -i '(.configMapGenerator[].literals[] | select(test("^REDIRECT_URI2="))) |= "REDIRECT_URI2=https://server" + env(APP_DOMAIN_URL) + "/*"' ./components/tpa/kustomization.yaml
+yq -i '(.configMapGenerator[].literals[] | select(test("^REDIRECT_URI3="))) |= "REDIRECT_URI3=https://sbom" + env(APP_DOMAIN_URL)' ./components/tpa/kustomization.yaml
+yq -i '(.configMapGenerator[].literals[] | select(test("^REDIRECT_URI4="))) |= "REDIRECT_URI4=https://sbom" + env(APP_DOMAIN_URL) + "/*"' ./components/tpa/kustomization.yaml
+yq -i '(.configMapGenerator[].literals[] | select(test("^SEED_STRING="))) |= "SEED_STRING=" + env(SEED_STRING)' ./components/tpa/kustomization.yaml
 
 echo "NOTE: Literals updated in components/tpa/kustomization.yaml. Check in and merge changes before running bootstrap.sh"
 
+# Create secrets
+echo "Creating Pull Secret"
+oc create secret generic global-pull-secret --type=kubernetes.io/dockerconfigjson --from-literal=.dockerconfigjson="$PULL_SECRET" -n hive
+
+echo "Creating AWS creds secret"
+oc create secret generic hive-aws-creds -n hive --from-literal=aws_access_key_id="$AWS_ACCESS_KEY_ID" --from-literal=aws_secret_access_key="$AWS_SECRET_ACCESS_KEY"
 
