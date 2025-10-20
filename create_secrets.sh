@@ -67,7 +67,7 @@ metadata:
     helm.sh/resource-policy: keep
   labels:
     app: keycloak
-  namespace: $TAP_NAMESPACE
+  namespace: $TPA_NAMESPACE
   name: tpa-realm-chicken-clients
 type: Opaque
 data:
@@ -92,7 +92,7 @@ stringData:
   bombastic_api_url: https://server$APP_DOMAIN_URL
   oidc_issuer_url: https://sso.$INGRESS_URL/realms/$REALM
   oidc_client_id: cli
-  oidc_client_secret: $PASS_CLI_B64
+  oidc_client_secret: $PASS_CLI
   supported_cyclonedx_version: "${CYCLONEDX_VER}"
 EOF
 
