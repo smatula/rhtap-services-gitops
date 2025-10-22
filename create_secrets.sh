@@ -58,6 +58,23 @@ data:
   password: $REALM_ADMIN_PASS_B64
 EOF
 
+# Add Secret to keycloak namespace for placeholders
+cat <<EOF | oc apply -f - -n $KEYCLOAK_NAMESPACE
+apiVersion: v1
+kind: Secret
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  labels:
+    app: keycloak
+  namespace: $KEYCLOAK_NAMESPACE
+  name: tpa-realm-chicken-admin
+type: Opaque
+stringData:
+  username: admin
+  password: $SEED_STRING
+EOF
+
 # Secret 4: OIDC Client Secrets (oidc cli, manager, user)
 cat <<EOF | oc apply -f - -n $TPA_NAMESPACE
 apiVersion: v1
@@ -74,6 +91,24 @@ data:
   cli: $PASS_CLI_B64
   testingManager: $PASS_MANAGER_B64
   testingUser: $PASS_USER_B64
+EOF
+
+# Add Secret to keycloak namespace for placeholders
+cat <<EOF | oc apply -f - -n $KEYCLOAK_NAMESPACE
+apiVersion: v1
+kind: Secret
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  labels:
+    app: keycloak
+  namespace: $KEYCLOAK_NAMESPACE
+  name: tpa-realm-chicken-clients
+type: Opaque
+stringData:
+  cli: $PASS_CLI
+  testingManager: $PASS_MANAGER
+  testingUser: $PASS_USER
 EOF
 
 # Secret 5: trustification integration
