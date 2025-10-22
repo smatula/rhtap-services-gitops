@@ -1107,7 +1107,7 @@ spec:
         bearerOnly: false
         clientAuthenticatorType: client-secret
         clientId: testing-manager
-        clientSecret:
+        secret:
           valueFrom:
             name: tpa-realm-chicken-clients
             key: testingManager
@@ -1182,7 +1182,7 @@ spec:
         bearerOnly: false
         clientAuthenticatorType: client-secret
         clientId: testing-user
-        clientSecret:
+        secret:
           valueFrom:
             name: tpa-realm-chicken-clients
             key: testingUser
@@ -1255,7 +1255,7 @@ spec:
         bearerOnly: false
         clientAuthenticatorType: client-secret
         clientId: cli
-        clientSecret:
+        secret:
           valueFrom:
             name: tpa-realm-chicken-clients
             key: cli
