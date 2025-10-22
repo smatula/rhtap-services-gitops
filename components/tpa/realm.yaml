@@ -1107,7 +1107,10 @@ spec:
         bearerOnly: false
         clientAuthenticatorType: client-secret
         clientId: testing-manager
-        secret: "${MANAGER_SECRET}"
+        clientSecret:
+          valueFrom:
+            name: tpa-realm-chicken-clients
+            key: testingManager
         consentRequired: false
         defaultClientScopes:
           - web-origins
@@ -1179,7 +1182,10 @@ spec:
         bearerOnly: false
         clientAuthenticatorType: client-secret
         clientId: testing-user
-        secret: "${USER_SECRET}"
+        clientSecret:
+          valueFrom:
+            name: tpa-realm-chicken-clients
+            key: testingUser
         consentRequired: false
         defaultClientScopes:
           - web-origins
@@ -1249,7 +1255,10 @@ spec:
         bearerOnly: false
         clientAuthenticatorType: client-secret
         clientId: cli
-        secret: "${CLI_SECRET}"
+        clientSecret:
+          valueFrom:
+            name: tpa-realm-chicken-clients
+            key: cli
         consentRequired: false
         defaultClientScopes:
           - web-origins
@@ -1866,18 +1875,6 @@ spec:
       - ES256
     webAuthnPolicyUserVerificationRequirement: not specified
   placeholders:
-    CLI_SECRET:
-      secret:
-        name: tpa-realm-chicken-clients
-        key: cli
-    USER_SECRET:
-      secret:
-        name: tpa-realm-chicken-clients
-        key: testingUser
-    MANAGER_SECRET:
-      secret:
-        name: tpa-realm-chicken-clients
-        key: testingManager
     SEED_PLACEHOLDER:
       secret:
         name: tpa-realm-chicken-admin
