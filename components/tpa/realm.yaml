@@ -1876,7 +1876,8 @@ spec:
         key: testingUser
     MANAGER_SECRET:
       secret:
-        name: tpa-realm-chicken-
+        name: tpa-realm-chicken-clients
+        key: testingManager
     SEED_PLACEHOLDER:
       secret:
         name: tpa-realm-chicken-admin
