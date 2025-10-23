@@ -139,7 +139,10 @@ yq -i '(.configMapGenerator[].literals[] | select(test("^REDIRECT_URI1="))) |= "
 yq -i '(.configMapGenerator[].literals[] | select(test("^REDIRECT_URI2="))) |= "REDIRECT_URI2=https://server" + env(APP_DOMAIN_URL) + "/*"' ./components/tpa/kustomization.yaml
 yq -i '(.configMapGenerator[].literals[] | select(test("^REDIRECT_URI3="))) |= "REDIRECT_URI3=https://sbom" + env(APP_DOMAIN_URL)' ./components/tpa/kustomization.yaml
 yq -i '(.configMapGenerator[].literals[] | select(test("^REDIRECT_URI4="))) |= "REDIRECT_URI4=https://sbom" + env(APP_DOMAIN_URL) + "/*"' ./components/tpa/kustomization.yaml
-#yq -i '(.configMapGenerator[].literals[] | select(test("^SEED_STRING="))) |= "SEED_STRING=" + env(SEED_STRING)' ./components/tpa/kustomization.yaml
+yq -i '(.configMapGenerator[].literals[] | select(test("^SEED_STRING="))) |= "SEED_STRING=" + env(SEED_STRING)' ./components/tpa/kustomization.yaml
+yq -i '(.configMapGenerator[].literals[] | select(test("^MANAGER="))) |= "MANAGER=" + env(PASS_MANAGER)' ./components/tpa/kustomization.yaml
+yq -i '(.configMapGenerator[].literals[] | select(test("^USER="))) |= "USER=" + env(PASS_USER)' ./components/tpa/kustomization.yaml
+yq -i '(.configMapGenerator[].literals[] | select(test("^CLI="))) |= "CLI=" + env(PASS_CLI)' ./components/tpa/kustomization.yaml
 
 echo "NOTE: Literals updated in components/tpa/kustomization.yaml. Check in and merge changes before running bootstrap.sh"
 
