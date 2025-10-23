@@ -9,7 +9,7 @@ spec:
     namespace: tssc-tpa
   project: gitops-resources
   source:
-    repoURL: https://github.com/smatula/rhtap-services-gitops
+    repoURL: https://github.com/rhopp/rhtap-services-gitops
     path: ./components/tpa
     targetRevision: tpa
   syncPolicy:
