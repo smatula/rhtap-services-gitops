@@ -18,7 +18,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 spec:
-  channel: stable-v26
+  channel: stable-v25
   name: rhbk-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
