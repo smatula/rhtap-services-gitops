@@ -62,10 +62,10 @@ spec:
 
               echo "Checking if secrets already exist..."
 
-              # Check each resource individually for better debug output
+              # Check each secret individually for better debug output
+              # Note: ConfigMap is always regenerated to ensure correct cluster values
               TPA_DB_EXISTS=false
               REALM_CLIENTS_EXISTS=false
-              CONFIGMAP_EXISTS=false
 
               if oc get secret tpa-pgsql-user -n "$TPA_NAMESPACE" &>/dev/null; then
                 echo "  ✓ Secret tpa-pgsql-user exists"
@@ -81,23 +81,54 @@ spec:
                 echo "  ✗ Secret tpa-realm-chicken-clients does not exist"
               fi
 
-              if oc get configmap tpa-values-source -n "$TPA_NAMESPACE" &>/dev/null; then
-                echo "  ✓ ConfigMap tpa-values-source exists"
-                CONFIGMAP_EXISTS=true
-              else
-                echo "  ✗ ConfigMap tpa-values-source does not exist"
-              fi
-
               echo ""
 
-              # Exit early if all resources exist
-              if [ "$TPA_DB_EXISTS" = true ] && [ "$REALM_CLIENTS_EXISTS" = true ] && [ "$CONFIGMAP_EXISTS" = true ]; then
-                echo "All secrets and ConfigMap already exist - skipping generation"
+              # Exit early if all secrets exist (ConfigMap will be regenerated regardless)
+              if [ "$TPA_DB_EXISTS" = true ] && [ "$REALM_CLIENTS_EXISTS" = true ]; then
+                echo "All secrets already exist - skipping secret generation"
+                echo "ConfigMap will still be updated to ensure correct cluster values"
+                echo "========================================"
+                echo ""
+
+                # Still create/update the ConfigMap with current cluster values
+                echo "Updating ConfigMap tpa-values-source..."
+                echo ""
+                echo "ConfigMap contents:"
+                echo "  APP_DOMAIN_URL: $APP_DOMAIN_URL"
+                echo "  OIDC_ISSUER_URL: $OIDC_ISSUER_URL"
+                echo "  KEYCLOAK_HOSTNAME: $KEYCLOAK_HOST"
+                echo "  REDIRECT_URI1: https://server$APP_DOMAIN_URL"
+                echo "  REDIRECT_URI2: https://server$APP_DOMAIN_URL/*"
+                echo "  REDIRECT_URI3: https://sbom$APP_DOMAIN_URL"
+                echo "  REDIRECT_URI4: https://sbom$APP_DOMAIN_URL/*"
+                echo ""
+
+                cat <<EOF_CONFIGMAP | oc apply -f -
+              apiVersion: v1
+              kind: ConfigMap
+              metadata:
+                name: tpa-values-source
+                namespace: $TPA_NAMESPACE
+                annotations:
+                  argocd.argoproj.io/sync-options: Prune=false
+              data:
+                APP_DOMAIN_URL: "$APP_DOMAIN_URL"
+                OIDC_ISSUER_URL: "$OIDC_ISSUER_URL"
+                KEYCLOAK_HOSTNAME: "$KEYCLOAK_HOST"
+                REDIRECT_URI1: "https://server$APP_DOMAIN_URL"
+                REDIRECT_URI2: "https://server$APP_DOMAIN_URL/*"
+                REDIRECT_URI3: "https://sbom$APP_DOMAIN_URL"
+                REDIRECT_URI4: "https://sbom$APP_DOMAIN_URL/*"
+              EOF_CONFIGMAP
+                echo "✓ ConfigMap updated"
+                echo ""
+                echo "========================================"
+                echo "ConfigMap update completed successfully!"
                 echo "========================================"
                 exit 0
               fi
 
-              echo "Some secrets or ConfigMap missing - proceeding with generation"
+              echo "Some secrets missing - proceeding with full generation"
               echo "========================================"
               echo ""
 
