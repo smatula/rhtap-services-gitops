@@ -2,18 +2,19 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 commonAnnotations:
   argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-# Secrets and ConfigMaps are generated automatically by ArgoCD Sync hook
-# See secret-generator/argocd-hook.yaml and secret-generator/README.md
+# ConfigMap is generated at build-time by exec plugin (see secret-generator/ConfigMapGenerator.sh)
+# Secrets are generated at runtime by ArgoCD Sync hook (see secret-generator/argocd-hook.yaml)
 resources:
   - namespaces.yaml
   - secret-generator/rbac.yaml
-  - secret-generator/configmap-template.yaml
   - secret-generator/argocd-hook.yaml
   - subscription.yaml
   - infrastructure.yaml
   - keycloak-instance.yaml
   - realm.yaml
   - tpa-release.yaml
+generators:
+  - secret-generator/function-config.yaml
 replacements:
 - source:
     kind: ConfigMap

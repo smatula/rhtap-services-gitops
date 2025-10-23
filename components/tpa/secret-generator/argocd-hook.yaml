@@ -1,5 +1,11 @@
 ---
-# ArgoCD Sync Hook - Generates secrets and ConfigMap during deployment
+# ArgoCD Sync Hook - Generates secrets during deployment
+#
+# NOTE: ConfigMap generation happens at BUILD TIME via exec plugin (ConfigMapGenerator.sh)
+# This hook still updates the ConfigMap at runtime for backwards compatibility and
+# to ensure cluster values are always current, but the primary ConfigMap generation
+# with correct cluster values happens during kustomize build.
+#
 # Runs in sync-wave 1 (after RBAC resources in wave 0, before app resources in wave 2+)
 apiVersion: batch/v1
 kind: Job
