@@ -1,0 +1,286 @@
+---
+# ArgoCD PreSync Hook - Generates secrets and ConfigMap before deployment
+# This Job runs before ArgoCD syncs the application
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: tpa-generate-secrets
+  namespace: tssc-tpa
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      name: tpa-generate-secrets
+    spec:
+      restartPolicy: Never
+      serviceAccountName: tpa-secret-generator
+      containers:
+        - name: generator
+          image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -euo pipefail
+
+              # Set namespace variables
+              TPA_NAMESPACE="tssc-tpa"
+              KEYCLOAK_NAMESPACE="tssc-keycloak"
+              REALM="chicken"
+
+              # Get ingress domain
+              INGRESS_DOMAIN=$(oc -n openshift-ingress-operator get ingresscontrollers.operator.openshift.io default -o jsonpath='{.status.domain}')
+
+              # Derive values
+              APP_DOMAIN_URL="-${TPA_NAMESPACE}.${INGRESS_DOMAIN}"
+              KEYCLOAK_HOST="sso.${INGRESS_DOMAIN}"
+              OIDC_ISSUER_URL="https://sso.${INGRESS_DOMAIN}/realms/${REALM}"
+              CYCLONEDX_VER="1.4"
+
+              echo "==> Generating secrets for domain: $INGRESS_DOMAIN"
+
+              # Function to get existing secret or generate new
+              get_or_generate_password() {
+                local namespace=$1
+                local name=$2
+                local key=$3
+                local length=${4:-16}
+
+                existing=$(oc get secret "$name" -n "$namespace" -o jsonpath="{.data.$key}" 2>/dev/null | base64 -d || echo "")
+                if [ -n "$existing" ]; then
+                  echo "$existing"
+                else
+                  openssl rand -base64 32 | tr -dc 'a-zA-Z0-9' | head -c "$length"
+                fi
+              }
+
+              get_or_generate_uuid_password() {
+                local namespace=$1
+                local name=$2
+                local key=$3
+
+                existing=$(oc get secret "$name" -n "$namespace" -o jsonpath="{.data.$key}" 2>/dev/null | base64 -d || echo "")
+                if [ -n "$existing" ]; then
+                  echo "$existing"
+                else
+                  random=$(openssl rand -base64 64 | tr -dc 'a-zA-Z0-9' | head -c 32)
+                  echo "${random:0:8}-${random:8:4}-${random:12:4}-${random:16:4}-${random:20:12}"
+                fi
+              }
+
+              # Generate or reuse passwords
+              TPA_USER_DB_PASS=$(get_or_generate_password "$TPA_NAMESPACE" "tpa-pgsql-user" "password" 16)
+              KEYCLOAK_USER_DB_PASS=$(get_or_generate_password "$KEYCLOAK_NAMESPACE" "keycloak-pgsql-user" "password" 16)
+              SEED_STRING=$(get_or_generate_password "$TPA_NAMESPACE" "tpa-realm-chicken-admin" "password" 16)
+              PASS_CLI=$(get_or_generate_uuid_password "$TPA_NAMESPACE" "tpa-realm-chicken-clients" "cli")
+              PASS_MANAGER=$(get_or_generate_uuid_password "$TPA_NAMESPACE" "tpa-realm-chicken-clients" "testingManager")
+              PASS_USER=$(get_or_generate_uuid_password "$TPA_NAMESPACE" "tpa-realm-chicken-clients" "testingUser")
+
+              # Create ConfigMap
+              oc apply -f - <<EOF
+              apiVersion: v1
+              kind: ConfigMap
+              metadata:
+                name: tpa-values-source
+                namespace: $TPA_NAMESPACE
+              data:
+                APP_DOMAIN_URL: "$APP_DOMAIN_URL"
+                OIDC_ISSUER_URL: "$OIDC_ISSUER_URL"
+                KEYCLOAK_HOSTNAME: "$KEYCLOAK_HOST"
+                REDIRECT_URI1: "https://server$APP_DOMAIN_URL"
+                REDIRECT_URI2: "https://server$APP_DOMAIN_URL/*"
+                REDIRECT_URI3: "https://sbom$APP_DOMAIN_URL"
+                REDIRECT_URI4: "https://sbom$APP_DOMAIN_URL/*"
+              EOF
+
+              # Create all secrets
+              oc apply -f - <<EOF
+              ---
+              apiVersion: v1
+              kind: Secret
+              type: Opaque
+              metadata:
+                name: tpa-pgsql-user
+                namespace: $TPA_NAMESPACE
+              stringData:
+                dbname: tpa
+                host: tpa-pgsql.tssc-tpa.svc
+                user: tpa
+                port: "5432"
+                password: "$TPA_USER_DB_PASS"
+              ---
+              apiVersion: v1
+              kind: Secret
+              type: Opaque
+              metadata:
+                name: keycloak-pgsql-user
+                namespace: $KEYCLOAK_NAMESPACE
+              stringData:
+                dbname: keycloak
+                host: keycloak-pgsql.tssc-keycloak.svc
+                user: keycloak
+                port: "5432"
+                password: "$KEYCLOAK_USER_DB_PASS"
+              ---
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                annotations:
+                  helm.sh/resource-policy: keep
+                labels:
+                  app: keycloak
+                namespace: $TPA_NAMESPACE
+                name: tpa-realm-chicken-admin
+              type: Opaque
+              stringData:
+                username: admin
+                password: "$SEED_STRING"
+              ---
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                annotations:
+                  helm.sh/resource-policy: keep
+                labels:
+                  app: keycloak
+                namespace: $KEYCLOAK_NAMESPACE
+                name: tpa-realm-chicken-admin
+              type: Opaque
+              stringData:
+                username: admin
+                password: $SEED_STRING
+              ---
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                annotations:
+                  helm.sh/resource-policy: keep
+                labels:
+                  app: keycloak
+                namespace: $TPA_NAMESPACE
+                name: tpa-realm-chicken-clients
+              type: Opaque
+              stringData:
+                cli: "$PASS_CLI"
+                testingManager: "$PASS_MANAGER"
+                testingUser: "$PASS_USER"
+              ---
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                annotations:
+                  helm.sh/resource-policy: keep
+                labels:
+                  app: keycloak
+                namespace: $KEYCLOAK_NAMESPACE
+                name: tpa-realm-chicken-clients
+              type: Opaque
+              stringData:
+                cli: $PASS_CLI
+                testingManager: $PASS_MANAGER
+                testingUser: $PASS_USER
+              ---
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                labels:
+                  app: keycloak
+                namespace: $TPA_NAMESPACE
+                name: tssc-trustification-integration
+                annotations:
+                  helm.sh/resource-policy: keep
+              type: Opaque
+              stringData:
+                bombastic_api_url: https://server$APP_DOMAIN_URL
+                oidc_issuer_url: https://sso.$INGRESS_DOMAIN/realms/$REALM
+                oidc_client_id: cli
+                oidc_client_secret: $PASS_CLI
+                supported_cyclonedx_version: "${CYCLONEDX_VER}"
+              EOF
+
+              echo "==> Secrets and ConfigMap generated successfully!"
+---
+# ServiceAccount for the hook Job
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tpa-secret-generator
+  namespace: tssc-tpa
+---
+# Role with permissions to create/update secrets and configmaps
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: tpa-secret-generator
+  namespace: tssc-tpa
+rules:
+  - apiGroups: [""]
+    resources: ["secrets", "configmaps"]
+    verbs: ["get", "list", "create", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: tpa-secret-generator
+  namespace: tssc-keycloak
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "create", "update", "patch"]
+---
+# RoleBinding for TPA namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tpa-secret-generator
+  namespace: tssc-tpa
+subjects:
+  - kind: ServiceAccount
+    name: tpa-secret-generator
+    namespace: tssc-tpa
+roleRef:
+  kind: Role
+  name: tpa-secret-generator
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding for Keycloak namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tpa-secret-generator
+  namespace: tssc-keycloak
+subjects:
+  - kind: ServiceAccount
+    name: tpa-secret-generator
+    namespace: tssc-tpa
+roleRef:
+  kind: Role
+  name: tpa-secret-generator
+  apiGroup: rbac.authorization.k8s.io
+---
+# ClusterRole to read IngressController
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: tpa-secret-generator-ingress-reader
+rules:
+  - apiGroups: ["operator.openshift.io"]
+    resources: ["ingresscontrollers"]
+    verbs: ["get", "list"]
+---
+# ClusterRoleBinding for reading IngressController
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tpa-secret-generator-ingress-reader
+subjects:
+  - kind: ServiceAccount
+    name: tpa-secret-generator
+    namespace: tssc-tpa
+roleRef:
+  kind: ClusterRole
+  name: tpa-secret-generator-ingress-reader
+  apiGroup: rbac.authorization.k8s.io
