@@ -1,14 +1,15 @@
 ---
-# ArgoCD PreSync Hook - Generates secrets and ConfigMap before deployment
-# This Job runs before ArgoCD syncs the application
+# ArgoCD Sync Hook - Generates secrets and ConfigMap during deployment
+# Runs in sync-wave 1 (after RBAC resources in wave 0, before app resources in wave 2+)
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: tpa-generate-secrets
   namespace: tssc-tpa
   annotations:
-    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook: Sync
     argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   ttlSecondsAfterFinished: 300
   template:
