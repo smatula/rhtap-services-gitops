@@ -316,6 +316,20 @@ spec:
               EOF
               echo "✓ All secrets created/updated"
               echo ""
+
+              # Patch the TPA Application with correct helm parameters
+              echo "Patching Application trusted-profile-analyzer with cluster-specific values..."
+              if oc get application trusted-profile-analyzer -n gitops-resources &>/dev/null; then
+                oc patch application trusted-profile-analyzer -n gitops-resources --type=json -p="[
+                  {\"op\": \"replace\", \"path\": \"/spec/source/helm/parameters/0/value\", \"value\": \"$APP_DOMAIN_URL\"},
+                  {\"op\": \"replace\", \"path\": \"/spec/source/helm/parameters/1/value\", \"value\": \"$OIDC_ISSUER_URL\"}
+                ]"
+                echo "✓ Application patched"
+              else
+                echo "  Application not yet created (will be created with replacements)"
+              fi
+              echo ""
+
               echo "========================================"
               echo "Secret generation completed successfully!"
               echo "========================================"
@@ -324,3 +338,4 @@ spec:
               echo "  - 7 Secrets created"
               echo "  - 1 ConfigMap created"
               echo "  - Cluster domain: $INGRESS_DOMAIN"
+              echo "  - Application patched (if exists)"

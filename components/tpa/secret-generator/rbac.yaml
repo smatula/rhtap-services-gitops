@@ -69,23 +69,26 @@ roleRef:
   name: tpa-secret-generator
   apiGroup: rbac.authorization.k8s.io
 ---
-# ClusterRole to read IngressController
+# ClusterRole to read IngressController and patch Applications
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: tpa-secret-generator-ingress-reader
+  name: tpa-secret-generator-cluster-access
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 rules:
   - apiGroups: ["operator.openshift.io"]
     resources: ["ingresscontrollers"]
     verbs: ["get", "list"]
+  - apiGroups: ["argoproj.io"]
+    resources: ["applications"]
+    verbs: ["get", "patch"]
 ---
-# ClusterRoleBinding for reading IngressController
+# ClusterRoleBinding for cluster-level access
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: tpa-secret-generator-ingress-reader
+  name: tpa-secret-generator-cluster-access
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 subjects:
@@ -94,5 +97,5 @@ subjects:
     namespace: tssc-tpa
 roleRef:
   kind: ClusterRole
-  name: tpa-secret-generator-ingress-reader
+  name: tpa-secret-generator-cluster-access
   apiGroup: rbac.authorization.k8s.io
