@@ -10,7 +10,6 @@ data:
     metadata:
       name: tpa-kustomize
     spec:
-      version: v1.0
       init:
         command: [sh, -c, 'echo "TPA CMP Plugin initialized"']
       generate:

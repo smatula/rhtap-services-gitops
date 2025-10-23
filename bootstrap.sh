@@ -69,12 +69,26 @@ spec:
           - mountPath: /usr/local/bin/oc
             name: custom-tools
             subPath: oc
+          - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+            name: service-account-token
+            readOnly: true
     volumes:
       - name: tpa-cmp-plugin
         configMap:
           name: tpa-cmp-plugin
       - name: custom-tools
         emptyDir: {}
+      - name: service-account-token
+        projected:
+          sources:
+            - serviceAccountToken:
+                path: token
+                expirationSeconds: 3600
+            - configMap:
+                name: kube-root-ca.crt
+                items:
+                  - key: ca.crt
+                    path: ca.crt
 ' --type=merge
 }
 
