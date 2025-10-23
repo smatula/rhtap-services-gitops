@@ -87,6 +87,8 @@ spec:
               metadata:
                 name: tpa-values-source
                 namespace: $TPA_NAMESPACE
+                annotations:
+                  argocd.argoproj.io/sync-options: Prune=false
               data:
                 APP_DOMAIN_URL: "$APP_DOMAIN_URL"
                 OIDC_ISSUER_URL: "$OIDC_ISSUER_URL"
