@@ -6,13 +6,13 @@ configMapGenerator:
   - name: tpa-values-source
     namespace: tssc-tpa
     literals:
-      - APP_DOMAIN_URL=-tssc-tpa.apps.cluster-58rvv.58rvv.sandbox2662.opentlc.com
-      - OIDC_ISSUER_URL=https://sso.apps.cluster-58rvv.58rvv.sandbox2662.opentlc.com/realms/chicken
-      - KEYCLOAK_HOSTNAME=sso.apps.cluster-58rvv.58rvv.sandbox2662.opentlc.com
-      - REDIRECT_URI1=https://server-tssc-tpa.apps.cluster-58rvv.58rvv.sandbox2662.opentlc.com
-      - REDIRECT_URI2=https://server-tssc-tpa.apps.cluster-58rvv.58rvv.sandbox2662.opentlc.com/*
-      - REDIRECT_URI3=https://sbom-tssc-tpa.apps.cluster-58rvv.58rvv.sandbox2662.opentlc.com
-      - REDIRECT_URI4=https://sbom-tssc-tpa.apps.cluster-58rvv.58rvv.sandbox2662.opentlc.com/*
+      - APP_DOMAIN_URL=-tssc-tpa.apps.cluster-zdz52.zdz52.sandbox5383.opentlc.com
+      - OIDC_ISSUER_URL=https://sso.apps.cluster-zdz52.zdz52.sandbox5383.opentlc.com/realms/chicken
+      - KEYCLOAK_HOSTNAME=sso.apps.cluster-zdz52.zdz52.sandbox5383.opentlc.com
+      - REDIRECT_URI1=https://server-tssc-tpa.apps.cluster-zdz52.zdz52.sandbox5383.opentlc.com
+      - REDIRECT_URI2=https://server-tssc-tpa.apps.cluster-zdz52.zdz52.sandbox5383.opentlc.com/*
+      - REDIRECT_URI3=https://sbom-tssc-tpa.apps.cluster-zdz52.zdz52.sandbox5383.opentlc.com
+      - REDIRECT_URI4=https://sbom-tssc-tpa.apps.cluster-zdz52.zdz52.sandbox5383.opentlc.com/*
 resources:
   - namespaces.yaml
   - subscription.yaml
