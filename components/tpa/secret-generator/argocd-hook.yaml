@@ -1,10 +1,10 @@
 ---
 # ArgoCD Sync Hook - Generates secrets during deployment
 #
+# This hook generates 7 secrets with passwords and credentials at runtime.
+# It preserves existing passwords (idempotent) if secrets already exist.
+#
 # NOTE: ConfigMap generation happens at BUILD TIME via exec plugin (ConfigMapGenerator.sh)
-# This hook still updates the ConfigMap at runtime for backwards compatibility and
-# to ensure cluster values are always current, but the primary ConfigMap generation
-# with correct cluster values happens during kustomize build.
 #
 # Runs in sync-wave 1 (after RBAC resources in wave 0, before app resources in wave 2+)
 apiVersion: batch/v1
@@ -54,16 +54,9 @@ spec:
               echo "  Ingress Domain: $INGRESS_DOMAIN"
               echo ""
 
-              # Derive values
+              # Derive values for secret generation
               APP_DOMAIN_URL="-${TPA_NAMESPACE}.${INGRESS_DOMAIN}"
-              KEYCLOAK_HOST="sso.${INGRESS_DOMAIN}"
-              OIDC_ISSUER_URL="https://sso.${INGRESS_DOMAIN}/realms/${REALM}"
               CYCLONEDX_VER="1.4"
-
-              echo "Derived values:"
-              echo "  APP_DOMAIN_URL: $APP_DOMAIN_URL"
-              echo "  KEYCLOAK_HOST: $KEYCLOAK_HOST"
-              echo "  OIDC_ISSUER_URL: $OIDC_ISSUER_URL"
               echo ""
 
               echo "Checking if secrets already exist..."
@@ -89,67 +82,14 @@ spec:
 
               echo ""
 
-              # Exit early if all secrets exist (ConfigMap will be regenerated regardless)
+              # Exit early if all secrets exist
               if [ "$TPA_DB_EXISTS" = true ] && [ "$REALM_CLIENTS_EXISTS" = true ]; then
                 echo "All secrets already exist - skipping secret generation"
-                echo "ConfigMap will still be updated to ensure correct cluster values"
-                echo "========================================"
-                echo ""
-
-                # Still create/update the ConfigMap with current cluster values
-                echo "Updating ConfigMap tpa-values-source..."
-                echo ""
-                echo "ConfigMap contents:"
-                echo "  APP_DOMAIN_URL: $APP_DOMAIN_URL"
-                echo "  OIDC_ISSUER_URL: $OIDC_ISSUER_URL"
-                echo "  KEYCLOAK_HOSTNAME: $KEYCLOAK_HOST"
-                echo "  REDIRECT_URI1: https://server$APP_DOMAIN_URL"
-                echo "  REDIRECT_URI2: https://server$APP_DOMAIN_URL/*"
-                echo "  REDIRECT_URI3: https://sbom$APP_DOMAIN_URL"
-                echo "  REDIRECT_URI4: https://sbom$APP_DOMAIN_URL/*"
-                echo ""
-
-                cat <<EOF_CONFIGMAP | oc apply -f -
-              apiVersion: v1
-              kind: ConfigMap
-              metadata:
-                name: tpa-values-source
-                namespace: $TPA_NAMESPACE
-                annotations:
-                  argocd.argoproj.io/sync-options: Prune=false
-              data:
-                APP_DOMAIN_URL: "$APP_DOMAIN_URL"
-                OIDC_ISSUER_URL: "$OIDC_ISSUER_URL"
-                KEYCLOAK_HOSTNAME: "$KEYCLOAK_HOST"
-                REDIRECT_URI1: "https://server$APP_DOMAIN_URL"
-                REDIRECT_URI2: "https://server$APP_DOMAIN_URL/*"
-                REDIRECT_URI3: "https://sbom$APP_DOMAIN_URL"
-                REDIRECT_URI4: "https://sbom$APP_DOMAIN_URL/*"
-              EOF_CONFIGMAP
-                echo "✓ ConfigMap updated"
-                echo ""
-
-                # Also patch the Application (early exit path)
-                echo "Patching Application trusted-profile-analyzer with cluster-specific values..."
-                if oc get application trusted-profile-analyzer -n gitops-resources &>/dev/null; then
-                  oc patch application trusted-profile-analyzer -n gitops-resources --type=json -p="[
-                    {\"op\": \"replace\", \"path\": \"/spec/source/helm/parameters/0/value\", \"value\": \"$APP_DOMAIN_URL\"},
-                    {\"op\": \"replace\", \"path\": \"/spec/source/helm/parameters/1/value\", \"value\": \"$OIDC_ISSUER_URL\"}
-                  ]"
-                  echo "✓ Application patched"
-                else
-                  echo "  Application not yet created (will be created with replacements)"
-                fi
-                echo ""
-
-                echo "========================================"
-                echo "ConfigMap update completed successfully!"
                 echo "========================================"
                 echo ""
                 echo "Summary:"
                 echo "  - Secrets already exist (skipped)"
-                echo "  - ConfigMap updated"
-                echo "  - Application patched (if exists)"
+                echo "  - ConfigMap generated at build-time by exec plugin"
                 echo "  - Cluster domain: $INGRESS_DOMAIN"
                 exit 0
               fi
@@ -199,40 +139,6 @@ spec:
               PASS_CLI=$(get_or_generate_uuid_password "$TPA_NAMESPACE" "tpa-realm-chicken-clients" "cli")
               PASS_MANAGER=$(get_or_generate_uuid_password "$TPA_NAMESPACE" "tpa-realm-chicken-clients" "testingManager")
               PASS_USER=$(get_or_generate_uuid_password "$TPA_NAMESPACE" "tpa-realm-chicken-clients" "testingUser")
-              echo ""
-
-              # Create ConfigMap
-              echo "Creating ConfigMap tpa-values-source..."
-              echo ""
-              echo "ConfigMap contents:"
-              echo "  APP_DOMAIN_URL: $APP_DOMAIN_URL"
-              echo "  OIDC_ISSUER_URL: $OIDC_ISSUER_URL"
-              echo "  KEYCLOAK_HOSTNAME: $KEYCLOAK_HOST"
-              echo "  REDIRECT_URI1: https://server$APP_DOMAIN_URL"
-              echo "  REDIRECT_URI2: https://server$APP_DOMAIN_URL/*"
-              echo "  REDIRECT_URI3: https://sbom$APP_DOMAIN_URL"
-              echo "  REDIRECT_URI4: https://sbom$APP_DOMAIN_URL/*"
-              echo ""
-              set -x
-              oc apply -f - <<EOF
-              apiVersion: v1
-              kind: ConfigMap
-              metadata:
-                name: tpa-values-source
-                namespace: $TPA_NAMESPACE
-                annotations:
-                  argocd.argoproj.io/sync-options: Prune=false
-              data:
-                APP_DOMAIN_URL: "$APP_DOMAIN_URL"
-                OIDC_ISSUER_URL: "$OIDC_ISSUER_URL"
-                KEYCLOAK_HOSTNAME: "$KEYCLOAK_HOST"
-                REDIRECT_URI1: "https://server$APP_DOMAIN_URL"
-                REDIRECT_URI2: "https://server$APP_DOMAIN_URL/*"
-                REDIRECT_URI3: "https://sbom$APP_DOMAIN_URL"
-                REDIRECT_URI4: "https://sbom$APP_DOMAIN_URL/*"
-              EOF
-              set +x
-              echo "✓ ConfigMap created/updated"
               echo ""
 
               # Create all secrets
@@ -343,25 +249,11 @@ spec:
               echo "✓ All secrets created/updated"
               echo ""
 
-              # Patch the TPA Application with correct helm parameters
-              echo "Patching Application trusted-profile-analyzer with cluster-specific values..."
-              if oc get application trusted-profile-analyzer -n gitops-resources &>/dev/null; then
-                oc patch application trusted-profile-analyzer -n gitops-resources --type=json -p="[
-                  {\"op\": \"replace\", \"path\": \"/spec/source/helm/parameters/0/value\", \"value\": \"$APP_DOMAIN_URL\"},
-                  {\"op\": \"replace\", \"path\": \"/spec/source/helm/parameters/1/value\", \"value\": \"$OIDC_ISSUER_URL\"}
-                ]"
-                echo "✓ Application patched"
-              else
-                echo "  Application not yet created (will be created with replacements)"
-              fi
-              echo ""
-
               echo "========================================"
               echo "Secret generation completed successfully!"
               echo "========================================"
               echo ""
               echo "Summary:"
               echo "  - 7 Secrets created"
-              echo "  - 1 ConfigMap created"
+              echo "  - ConfigMap generated at build-time by exec plugin"
               echo "  - Cluster domain: $INGRESS_DOMAIN"
-              echo "  - Application patched (if exists)"
