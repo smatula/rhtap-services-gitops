@@ -41,6 +41,16 @@ spec:
               OIDC_ISSUER_URL="https://sso.${INGRESS_DOMAIN}/realms/${REALM}"
               CYCLONEDX_VER="1.4"
 
+              echo "==> Checking if secrets already exist..."
+
+              # Exit early if secrets already exist to avoid regenerating on every sync
+              if oc get secret tpa-pgsql-user -n "$TPA_NAMESPACE" &>/dev/null && \
+                 oc get secret tpa-realm-chicken-clients -n "$TPA_NAMESPACE" &>/dev/null && \
+                 oc get configmap tpa-values-source -n "$TPA_NAMESPACE" &>/dev/null; then
+                echo "==> Secrets and ConfigMap already exist, skipping generation"
+                exit 0
+              fi
+
               echo "==> Generating secrets for domain: $INGRESS_DOMAIN"
 
               # Function to get existing secret or generate new
