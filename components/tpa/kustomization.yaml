@@ -18,7 +18,6 @@ resources:
   - subscription.yaml
   - infrastructure.yaml
   - keycloak-instance.yaml
-  - realm.yaml
   - tpa-release.yaml
 replacements:
   - source:
