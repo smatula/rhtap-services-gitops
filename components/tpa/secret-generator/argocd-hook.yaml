@@ -146,6 +146,17 @@ spec:
 
               # Create ConfigMap
               echo "Creating ConfigMap tpa-values-source..."
+              echo ""
+              echo "ConfigMap contents:"
+              echo "  APP_DOMAIN_URL: $APP_DOMAIN_URL"
+              echo "  OIDC_ISSUER_URL: $OIDC_ISSUER_URL"
+              echo "  KEYCLOAK_HOSTNAME: $KEYCLOAK_HOST"
+              echo "  REDIRECT_URI1: https://server$APP_DOMAIN_URL"
+              echo "  REDIRECT_URI2: https://server$APP_DOMAIN_URL/*"
+              echo "  REDIRECT_URI3: https://sbom$APP_DOMAIN_URL"
+              echo "  REDIRECT_URI4: https://sbom$APP_DOMAIN_URL/*"
+              echo ""
+
               oc apply -f - <<EOF
               apiVersion: v1
               kind: ConfigMap
