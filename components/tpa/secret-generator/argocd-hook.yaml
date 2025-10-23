@@ -27,13 +27,26 @@ spec:
             - |
               set -euo pipefail
 
+              echo "========================================"
+              echo "TPA Secret Generator - Starting"
+              echo "========================================"
+
               # Set namespace variables
               TPA_NAMESPACE="tssc-tpa"
               KEYCLOAK_NAMESPACE="tssc-keycloak"
               REALM="chicken"
 
+              echo "Configuration:"
+              echo "  TPA Namespace: $TPA_NAMESPACE"
+              echo "  Keycloak Namespace: $KEYCLOAK_NAMESPACE"
+              echo "  Realm: $REALM"
+              echo ""
+
               # Get ingress domain
+              echo "Querying cluster for ingress domain..."
               INGRESS_DOMAIN=$(oc -n openshift-ingress-operator get ingresscontrollers.operator.openshift.io default -o jsonpath='{.status.domain}')
+              echo "  Ingress Domain: $INGRESS_DOMAIN"
+              echo ""
 
               # Derive values
               APP_DOMAIN_URL="-${TPA_NAMESPACE}.${INGRESS_DOMAIN}"
@@ -41,17 +54,52 @@ spec:
               OIDC_ISSUER_URL="https://sso.${INGRESS_DOMAIN}/realms/${REALM}"
               CYCLONEDX_VER="1.4"
 
-              echo "==> Checking if secrets already exist..."
+              echo "Derived values:"
+              echo "  APP_DOMAIN_URL: $APP_DOMAIN_URL"
+              echo "  KEYCLOAK_HOST: $KEYCLOAK_HOST"
+              echo "  OIDC_ISSUER_URL: $OIDC_ISSUER_URL"
+              echo ""
 
-              # Exit early if secrets already exist to avoid regenerating on every sync
-              if oc get secret tpa-pgsql-user -n "$TPA_NAMESPACE" &>/dev/null && \
-                 oc get secret tpa-realm-chicken-clients -n "$TPA_NAMESPACE" &>/dev/null && \
-                 oc get configmap tpa-values-source -n "$TPA_NAMESPACE" &>/dev/null; then
-                echo "==> Secrets and ConfigMap already exist, skipping generation"
+              echo "Checking if secrets already exist..."
+
+              # Check each resource individually for better debug output
+              TPA_DB_EXISTS=false
+              REALM_CLIENTS_EXISTS=false
+              CONFIGMAP_EXISTS=false
+
+              if oc get secret tpa-pgsql-user -n "$TPA_NAMESPACE" &>/dev/null; then
+                echo "  ✓ Secret tpa-pgsql-user exists"
+                TPA_DB_EXISTS=true
+              else
+                echo "  ✗ Secret tpa-pgsql-user does not exist"
+              fi
+
+              if oc get secret tpa-realm-chicken-clients -n "$TPA_NAMESPACE" &>/dev/null; then
+                echo "  ✓ Secret tpa-realm-chicken-clients exists"
+                REALM_CLIENTS_EXISTS=true
+              else
+                echo "  ✗ Secret tpa-realm-chicken-clients does not exist"
+              fi
+
+              if oc get configmap tpa-values-source -n "$TPA_NAMESPACE" &>/dev/null; then
+                echo "  ✓ ConfigMap tpa-values-source exists"
+                CONFIGMAP_EXISTS=true
+              else
+                echo "  ✗ ConfigMap tpa-values-source does not exist"
+              fi
+
+              echo ""
+
+              # Exit early if all resources exist
+              if [ "$TPA_DB_EXISTS" = true ] && [ "$REALM_CLIENTS_EXISTS" = true ] && [ "$CONFIGMAP_EXISTS" = true ]; then
+                echo "All secrets and ConfigMap already exist - skipping generation"
+                echo "========================================"
                 exit 0
               fi
 
-              echo "==> Generating secrets for domain: $INGRESS_DOMAIN"
+              echo "Some secrets or ConfigMap missing - proceeding with generation"
+              echo "========================================"
+              echo ""
 
               # Function to get existing secret or generate new
               get_or_generate_password() {
@@ -62,8 +110,10 @@ spec:
 
                 existing=$(oc get secret "$name" -n "$namespace" -o jsonpath="{.data.$key}" 2>/dev/null | base64 -d || echo "")
                 if [ -n "$existing" ]; then
+                  echo "  Reusing existing password for $name/$key" >&2
                   echo "$existing"
                 else
+                  echo "  Generating new password for $name/$key" >&2
                   openssl rand -base64 32 | tr -dc 'a-zA-Z0-9' | head -c "$length"
                 fi
               }
@@ -75,22 +125,27 @@ spec:
 
                 existing=$(oc get secret "$name" -n "$namespace" -o jsonpath="{.data.$key}" 2>/dev/null | base64 -d || echo "")
                 if [ -n "$existing" ]; then
+                  echo "  Reusing existing password for $name/$key" >&2
                   echo "$existing"
                 else
+                  echo "  Generating new UUID-style password for $name/$key" >&2
                   random=$(openssl rand -base64 64 | tr -dc 'a-zA-Z0-9' | head -c 32)
                   echo "${random:0:8}-${random:8:4}-${random:12:4}-${random:16:4}-${random:20:12}"
                 fi
               }
 
               # Generate or reuse passwords
+              echo "Processing passwords..."
               TPA_USER_DB_PASS=$(get_or_generate_password "$TPA_NAMESPACE" "tpa-pgsql-user" "password" 16)
               KEYCLOAK_USER_DB_PASS=$(get_or_generate_password "$KEYCLOAK_NAMESPACE" "keycloak-pgsql-user" "password" 16)
               SEED_STRING=$(get_or_generate_password "$TPA_NAMESPACE" "tpa-realm-chicken-admin" "password" 16)
               PASS_CLI=$(get_or_generate_uuid_password "$TPA_NAMESPACE" "tpa-realm-chicken-clients" "cli")
               PASS_MANAGER=$(get_or_generate_uuid_password "$TPA_NAMESPACE" "tpa-realm-chicken-clients" "testingManager")
               PASS_USER=$(get_or_generate_uuid_password "$TPA_NAMESPACE" "tpa-realm-chicken-clients" "testingUser")
+              echo ""
 
               # Create ConfigMap
+              echo "Creating ConfigMap tpa-values-source..."
               oc apply -f - <<EOF
               apiVersion: v1
               kind: ConfigMap
@@ -108,8 +163,11 @@ spec:
                 REDIRECT_URI3: "https://sbom$APP_DOMAIN_URL"
                 REDIRECT_URI4: "https://sbom$APP_DOMAIN_URL/*"
               EOF
+              echo "✓ ConfigMap created/updated"
+              echo ""
 
               # Create all secrets
+              echo "Creating secrets..."
               oc apply -f - <<EOF
               ---
               apiVersion: v1
@@ -213,5 +271,13 @@ spec:
                 oidc_client_secret: $PASS_CLI
                 supported_cyclonedx_version: "${CYCLONEDX_VER}"
               EOF
-
-              echo "==> Secrets and ConfigMap generated successfully!"
+              echo "✓ All secrets created/updated"
+              echo ""
+              echo "========================================"
+              echo "Secret generation completed successfully!"
+              echo "========================================"
+              echo ""
+              echo "Summary:"
+              echo "  - 7 Secrets created"
+              echo "  - 1 ConfigMap created"
+              echo "  - Cluster domain: $INGRESS_DOMAIN"
