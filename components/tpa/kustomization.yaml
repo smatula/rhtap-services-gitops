@@ -7,6 +7,7 @@ commonAnnotations:
 # Or use ArgoCD PreSync hook (see secret-generator/argocd-hook.yaml)
 resources:
   - namespaces.yaml
+  - secret-generator/rbac.yaml
   - secret-generator/configmap-template.yaml
   - secret-generator/argocd-hook.yaml
   - subscription.yaml
