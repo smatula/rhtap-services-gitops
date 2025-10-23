@@ -1,32 +1,23 @@
 # TPA Secret Generator
 
-This directory contains scripts and ArgoCD hooks to generate secrets and ConfigMaps for the TPA (Trusted Profile Analyzer) deployment.
+This directory contains ArgoCD hooks to generate secrets and ConfigMaps for the TPA (Trusted Profile Analyzer) deployment.
 
 ## Overview
 
 This replaces the old `create_secrets.sh` script with a declarative, GitOps-friendly approach. Secrets and ConfigMaps are generated dynamically based on the cluster's ingress domain.
 
-## How It Works - ArgoCD/GitOps (Recommended)
+## How It Works
 
 When ArgoCD syncs the TPA application:
 
-1. **PreSync Hook Runs**: The Job in argocd-hook.yaml executes before deployment
-2. **Queries Cluster**: Gets the ingress domain from the IngressController
-3. **Generates Secrets**: Creates all secrets with random passwords (or reuses existing ones)
-4. **Creates ConfigMap**: Generates environment-specific values
-5. **Main Sync**: ArgoCD then syncs the rest of the application
+1. **Wave 0**: RBAC resources created (ServiceAccount, Roles, RoleBindings)
+2. **Wave 1 - Sync Hook Runs**: The Job in argocd-hook.yaml executes
+3. **Queries Cluster**: Gets the ingress domain from the IngressController
+4. **Generates Secrets**: Creates all secrets with random passwords (or reuses existing ones)
+5. **Creates ConfigMap**: Generates environment-specific values
+6. **Wave 2+**: Rest of application deploys
 
-**Just commit and push** - ArgoCD handles the rest automatically!
-
-## How It Works - Manual Deployment
-
-If deploying without ArgoCD:
-
-```bash
-cd components/tpa
-./secret-generator/generate-secrets.sh
-kustomize build . | oc apply -f -
-```
+**Just commit and push** - ArgoCD handles everything automatically!
 
 ## Key Features
 
@@ -58,16 +49,10 @@ yq -i '...' kustomization.yaml  # Manual edits
 git commit  # Commit modified kustomization.yaml
 ```
 
-### After (ArgoCD):
+### After:
 ```bash
 git commit  # Just commit your changes
-git push    # ArgoCD PreSync hook generates everything
-```
-
-### After (Manual):
-```bash
-./secret-generator/generate-secrets.sh  # One command
-kustomize build . | oc apply -f -
+git push    # ArgoCD Sync hook generates everything automatically
 ```
 
 ## Troubleshooting

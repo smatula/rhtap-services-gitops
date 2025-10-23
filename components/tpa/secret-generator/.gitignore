@@ -1,4 +1,2 @@
-# Auto-generated secret files - DO NOT COMMIT
-# These contain sensitive credentials and should be generated per-environment
-generated-secret-*.yaml
-generated-configmap.yaml
+# This directory uses ArgoCD Sync hooks to generate secrets dynamically
+# No local files should be generated
