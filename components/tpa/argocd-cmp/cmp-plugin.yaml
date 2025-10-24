@@ -41,7 +41,7 @@ data:
               if [ -n "$existing" ]; then
                 echo "$existing"
               else
-                openssl rand -base64 32 | tr -dc 'a-zA-Z0-9' | head -c "$length"
+                head -c 64 /dev/urandom | base64 --wrap=0 | tr -dc 'a-zA-Z0-9' | head -c "$length"
               fi
             }
 
@@ -54,7 +54,7 @@ data:
               if [ -n "$existing" ]; then
                 echo "$existing"
               else
-                random=$(openssl rand -base64 64 | tr -dc 'a-zA-Z0-9' | head -c 32)
+                random=$( head -c 64 /dev/urandom | base64 --wrap=0 | tr -dc 'a-zA-Z0-9' | head -c 32)
                 echo "${random:0:8}-${random:8:4}-${random:12:4}-${random:16:4}-${random:20:12}"
               fi
             }
