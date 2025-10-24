@@ -30,12 +30,6 @@ data:
             KEYCLOAK_HOST="sso.${INGRESS_DOMAIN}"
             OIDC_ISSUER_URL="https://sso.${INGRESS_DOMAIN}/realms/${REALM}"
 
-            # Generate or reuse passwords
-            SEED_STRING="tmp"
-            PASS_CLI="tmp"
-            PASS_MANAGER="tmp"
-            PASS_USER="tmp"
-
             # Create ConfigMap with cluster-specific values
             cat > generated-configmap.yaml <<EOF
             apiVersion: v1
@@ -49,14 +43,14 @@ data:
               APP_DOMAIN_URL: "${APP_DOMAIN_URL}"
               OIDC_ISSUER_URL: "${OIDC_ISSUER_URL}"
               KEYCLOAK_HOSTNAME: "${KEYCLOAK_HOST}"
+              CLI: "tmp"
+              MANAGER: "tmp1"
+              USER: "tmp2"
+              SEED: "tmp3"
               REDIRECT_URI1: "https://server${APP_DOMAIN_URL}"
               REDIRECT_URI2: "https://server${APP_DOMAIN_URL}/*"
               REDIRECT_URI3: "https://sbom${APP_DOMAIN_URL}"
               REDIRECT_URI4: "https://sbom${APP_DOMAIN_URL}/*"
-              CLI: "${PASS_CLI}"
-              MANAGER: "${PASS_MANAGER}"
-              USER: "${PASS_USER}"
-              SEED: "${SEED_STRING}"
             EOF
 
             # Modify kustomization.yaml to include generated ConfigMap
