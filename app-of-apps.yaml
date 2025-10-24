@@ -11,7 +11,7 @@ spec:
   source:
     path: ./app-of-apps
     repoURL: https://github.com/smatula/rhtap-services-gitops
-    targetRevision: tpa
+    targetRevision: tpa2
   syncPolicy:
     automated: 
       prune: true
