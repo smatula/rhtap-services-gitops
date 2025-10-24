@@ -78,14 +78,14 @@ data:
               APP_DOMAIN_URL: "${APP_DOMAIN_URL}"
               OIDC_ISSUER_URL: "${OIDC_ISSUER_URL}"
               KEYCLOAK_HOSTNAME: "${KEYCLOAK_HOST}"
-              REDIRECT_URI1: "https://server${APP_DOMAIN_URL}"
-              REDIRECT_URI2: "https://server${APP_DOMAIN_URL}/*"
-              REDIRECT_URI3: "https://sbom${APP_DOMAIN_URL}"
-              REDIRECT_URI4: "https://sbom${APP_DOMAIN_URL}/*"
               CLI: "${PASS_CLI}"
               MANAGER: "${PASS_MANAGER}"
               USER: "${PASS_USER}"
               SEED: "${SEED_STRING}"
+              REDIRECT_URI1: "https://server${APP_DOMAIN_URL}"
+              REDIRECT_URI2: "https://server${APP_DOMAIN_URL}/*"
+              REDIRECT_URI3: "https://sbom${APP_DOMAIN_URL}"
+              REDIRECT_URI4: "https://sbom${APP_DOMAIN_URL}/*"
             EOF
 
             # Modify kustomization.yaml to include generated ConfigMap
