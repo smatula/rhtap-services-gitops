@@ -31,10 +31,10 @@ data:
             OIDC_ISSUER_URL="https://sso.${INGRESS_DOMAIN}/realms/${REALM}"
 
             # Generate or reuse passwords
-            SEED_STRING=""
-            PASS_CLI=""
-            PASS_MANAGER=""
-            PASS_USER=""
+            SEED_STRING="tmp"
+            PASS_CLI="tmp"
+            PASS_MANAGER="tmp"
+            PASS_USER="tmp"
 
             # Create ConfigMap with cluster-specific values
             cat > generated-configmap.yaml <<EOF
