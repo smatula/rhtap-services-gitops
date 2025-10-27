@@ -10,6 +10,10 @@ resources:
   - keycloak-instance.yaml
   - realm.yaml
   - tpa-release.yaml
+  - apiVersion: v1
+    kind: ConfigMap
+    name: tpa-values-source 
+    namespace: tssc-tpa
 replacements:
 - source:
     kind: ConfigMap
