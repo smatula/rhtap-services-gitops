@@ -7,24 +7,21 @@ spec:
   generators:
   - list:
       elements:
-        # 1. First Pass: Create the ConfigMap/Secret sources
         - name: vars-and-secrets
           app_wave: 1
           app_path: components/tpa/vars-config.yaml
-
-        # 2. Second Pass: Deploy TPA, relying on the output of App 1
+          cluster: service
+          url: https://kubernetes.default.svc
         - name: tpa
-          app_path: components/tpa/tpa.yaml
           app_wave: 2
-          # CRITICAL: This dependency ensures App 2 only starts when App 1 is Healthy
+          app_path: components/tpa/tpa.yaml
+          cluster: service
+          url: https://kubernetes.default.svc
           dependencies: [vars-and-secrets]
-
   template:
     metadata:
-      # Application name is generated from the list element's 'name'
       name: '{{.name}}'
       annotations:
-        # Custom annotations from the element list, if any
         argocd.argoproj.io/sync-wave: '{{.app_wave}}'
         argocd.argoproj.io/applicationset.dependencies: '{{.dependencies | toJson}}'
     spec:
@@ -35,15 +32,12 @@ spec:
       source:
         repoURL: https://github.com/smatula/rhtap-services-gitops
         targetRevision: tpa2
-        path: '{{.app_path}}' # Points to either the 01- or 02- file
-
-      # CRITICAL: This dependency block enforces the sequence
+        path: '{{.app_path}}'
       syncPolicy:
         managedNamespaceMetadata:
           labels:
             argocd.argoproj.io/managed-by: openshift-gitops
         syncOptions:
-          # Wait for the dependency app to be Healthy before starting sync
           - RespectDependencies=true
           - CreateNamespace=true
           - PruneLast=true
