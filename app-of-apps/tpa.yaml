@@ -26,7 +26,7 @@ spec:
       annotations:
         # Custom annotations from the element list, if any
         argocd.argoproj.io/sync-wave: '{{app_wave}}'
-
+        argocd.argoproj.io/applicationset.dependencies: '{{dependencies | toJson}}'
     spec:
       destination:
         server: https://kubernetes.default.svc
