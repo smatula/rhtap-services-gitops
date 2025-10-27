@@ -4,6 +4,8 @@ metadata:
   name: tpa-sequential-deployment
   namespace: openshift-gitops
 spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
   generators:
   - list:
       elements:
@@ -16,9 +18,10 @@ spec:
         dependencies: [vars-and-secrets]
   template:
     metadata:
-      name: vars-and-secrets
+      name: '{{name}}'
       annotations:
-        argocd.argoproj.io/sync-wave: "1"
+        argocd.argoproj.io/sync-wave: '{{app-wave}}' 
+        argocd.argoproj.io/applicationset.dependencies: '{{dependencies | toJson}}'
     spec:
       destination:
         server: https://kubernetes.default.svc
@@ -27,7 +30,7 @@ spec:
       source:
         repoURL: https://github.com/smatula/rhtap-services-gitops
         targetRevision: tpa2
-        path: components/tpa/vars-config.yaml
+        path: '{{app_path}}'
       syncPolicy:
         managedNamespaceMetadata:
           labels:
