@@ -66,4 +66,3 @@ data:
             kustomize build .
       discover:
         fileName: "kustomization.yaml"
-
