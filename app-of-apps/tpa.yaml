@@ -12,6 +12,7 @@ spec:
       - name: vars-and-secrets
         app_wave: "1"
         app_path: components/tpa/vars-config.yaml
+        dependencies: []
       - name: tpa
         app_wave: "2"
         app_path: components/tpa/tpa.yaml
