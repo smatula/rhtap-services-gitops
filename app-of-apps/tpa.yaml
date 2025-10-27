@@ -11,7 +11,7 @@ spec:
         - name: vars-and-secrets
           app_wave: 1
           app_path: components/tpa/vars-config.yaml
-          dependencies: []
+          dependencies: [""]
 
         # 2. Second Pass: Deploy TPA, relying on the output of App 1
         - name: tpa
