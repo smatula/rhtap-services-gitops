@@ -22,11 +22,11 @@ spec:
   template:
     metadata:
       # Application name is generated from the list element's 'name'
-      name: '{{name}}'
+      name: '{{.name}}'
       annotations:
         # Custom annotations from the element list, if any
-        argocd.argoproj.io/sync-wave: '{{app_wave}}'
-        argocd.argoproj.io/applicationset.dependencies: '{{dependencies | toJson}}'
+        argocd.argoproj.io/sync-wave: '{{.app_wave}}'
+        argocd.argoproj.io/applicationset.dependencies: '{{.dependencies | toJson}}'
     spec:
       destination:
         server: https://kubernetes.default.svc
@@ -35,7 +35,7 @@ spec:
       source:
         repoURL: https://github.com/smatula/rhtap-services-gitops
         targetRevision: tpa2
-        path: '{{app_path}}' # Points to either the 01- or 02- file
+        path: '{{.app_path}}' # Points to either the 01- or 02- file
 
       # CRITICAL: This dependency block enforces the sequence
       syncPolicy:
