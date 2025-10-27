@@ -16,10 +16,9 @@ spec:
         dependencies: [vars-and-secrets]
   template:
     metadata:
-      name: '{{.name}}'
+      name: vars-and-secrets
       annotations:
-        argocd.argoproj.io/sync-wave: '{{.app_wave}}'
-        argocd.argoproj.io/applicationset.dependencies: '{{.dependencies | toJson}}'
+        argocd.argoproj.io/sync-wave: 1 
     spec:
       destination:
         server: https://kubernetes.default.svc
@@ -28,7 +27,7 @@ spec:
       source:
         repoURL: https://github.com/smatula/rhtap-services-gitops
         targetRevision: tpa2
-        path: '{{.app_path}}'
+        path: components/tpa/vars-config.yaml
       syncPolicy:
         managedNamespaceMetadata:
           labels:
