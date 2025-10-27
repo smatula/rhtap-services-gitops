@@ -21,7 +21,7 @@ spec:
     metadata:
       name: '{{.name}}'
       annotations:
-        argocd.argoproj.io/sync-wave: '{{.app-wave}}' 
+        argocd.argoproj.io/sync-wave: '{{.app_wave}}' 
         argocd.argoproj.io/applicationset.dependencies: '{{.dependencies | toJson}}'
     spec:
       destination:
