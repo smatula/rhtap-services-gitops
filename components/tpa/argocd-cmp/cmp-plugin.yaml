@@ -51,25 +51,6 @@ data:
             KEYCLOAK_HOST="sso.${INGRESS_DOMAIN}"
             OIDC_ISSUER_URL="https://sso.${INGRESS_DOMAIN}/realms/${REALM}"
 
-            # Create ConfigMap with cluster-specific values
-            cat > generated-configmap.yaml <<EOF
-            apiVersion: v1
-            kind: ConfigMap
-            metadata:
-              name: tpa-values-source
-              namespace: ${TPA_NAMESPACE}
-              annotations:
-                argocd.argoproj.io/sync-options: Prune=false
-            data:
-              APP_DOMAIN_URL: "${APP_DOMAIN_URL}"
-              OIDC_ISSUER_URL: "${OIDC_ISSUER_URL}"
-              KEYCLOAK_HOSTNAME: "${KEYCLOAK_HOST}"
-              REDIRECT_URI1: "https://server${APP_DOMAIN_URL}"
-              REDIRECT_URI2: "https://server${APP_DOMAIN_URL}/*"
-              REDIRECT_URI3: "https://sbom${APP_DOMAIN_URL}"
-              REDIRECT_URI4: "https://sbom${APP_DOMAIN_URL}/*"
-            EOF
-
             # Function to get existing secret or generate new
             get_or_generate_password() {
               local namespace=$1
@@ -104,8 +85,23 @@ data:
             PASS_CLI=$(get_or_generate_uuid_password "$TPA_NAMESPACE" "tpa-realm-chicken-clients" "cli")
             PASS_MANAGER=$(get_or_generate_uuid_password "$TPA_NAMESPACE" "tpa-realm-chicken-clients" "testingManager")
             PASS_USER=$(get_or_generate_uuid_password "$TPA_NAMESPACE" "tpa-realm-chicken-clients" "testingUser")
- 
-            cat > generated-secret.yaml <<EOF
+            # Create ConfigMap with cluster-specific values
+            cat > generated-configmap.yaml <<EOF
+            apiVersion: v1
+            kind: ConfigMap
+            metadata:
+              name: tpa-values-source
+              namespace: ${TPA_NAMESPACE}
+              annotations:
+                argocd.argoproj.io/sync-options: Prune=false
+            data:
+              APP_DOMAIN_URL: "${APP_DOMAIN_URL}"
+              OIDC_ISSUER_URL: "${OIDC_ISSUER_URL}"
+              KEYCLOAK_HOSTNAME: "${KEYCLOAK_HOST}"
+              REDIRECT_URI1: "https://server${APP_DOMAIN_URL}"
+              REDIRECT_URI2: "https://server${APP_DOMAIN_URL}/*"
+              REDIRECT_URI3: "https://sbom${APP_DOMAIN_URL}"
+              REDIRECT_URI4: "https://sbom${APP_DOMAIN_URL}/*"
             ---
             apiVersion: v1
             kind: Secret
@@ -134,12 +130,6 @@ data:
             # Add generated ConfigMap to resources if not already there
             if ! grep -q "generated-configmap.yaml" kustomization.yaml; then
               sed '/^resources:/a\  - generated-configmap.yaml' kustomization.yaml > kustomization.yaml.tmp
-              mv kustomization.yaml.tmp kustomization.yaml
-            fi
-
-            # Add generated Secret to resources if not already there
-            if ! grep -q "generated-secret.yaml" kustomization.yaml; then
-              sed '/^resources:/a\  - generated-secret.yaml' kustomization.yaml > kustomization.yaml.tmp
               mv kustomization.yaml.tmp kustomization.yaml
             fi
 
