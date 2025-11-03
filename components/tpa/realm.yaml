@@ -419,22 +419,6 @@ spec:
         - view-groups
     clientScopes:
     - attributes:
-        consent.screen.text: ''
-        display.on.consent.screen: 'true'
-        gui.order: ''
-        include.in.token.scope: 'true'
-      description: ''
-      name: sub
-      protocol: openid-connect
-      protocolMappers:
-      - config:
-          access.token.claim: 'true'
-          introspection.token.claim: 'true'
-        consentRequired: false
-        name: sub
-        protocol: openid-connect
-        protocolMapper: oidc-sub-mapper
-    - attributes:
         consent.screen.text: ${emailScopeConsentText}
         display.on.consent.screen: "true"
         include.in.token.scope: "true"
@@ -985,7 +969,6 @@ spec:
       - web-origins
       - delete:document
       - profile
-      - sub
       - roles
       - read:document
       - email
@@ -1867,20 +1850,3 @@ spec:
     webAuthnPolicySignatureAlgorithms:
     - ES256
     webAuthnPolicyUserVerificationRequirement: not specified
-  placeholders:
-    CLI_SECRET:
-      secret:
-        name: tpa-realm-chicken-clients
-        key: cli
-    USER_SECRET:
-      secret:
-        name: tpa-realm-chicken-clients
-        key: testingUser
-    MANAGER_SECRET:
-      secret:
-        name: tpa-realm-chicken-clients
-        key: testingManager
-    SEED_PLACEHOLDER:
-      secret:
-        name: tpa-realm-chicken-admin
-        key: password
