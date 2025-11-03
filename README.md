@@ -202,30 +202,8 @@ $ kubectl -n rhacs-operator get secret central-htpasswd -o jsonpath='{.data.pass
 
 ### TPA - After deployement.
 
-1. Verify login to TPA.
-   a) Attempt to login into tpa with admin and password from secret: tpa-realm-chicken-admin namespace: tssc-tpa
-      If unable, reset password in keycloak else go to setp 2.
-
-   b) Reset password in keycloak.
-       - Login to Keycloak Admin Console, Use user and password from secret: keycloak-initial-admin namespace: tssc-keycloak.
-       - Click 'Manage realms' in left panel. Then click on realm 'chicken'
-       - Click 'Users' in left panel. Then click on user 'admin', click 'Credentials' tab and then click 'Reset password'
-       - Enter password from secret: tpa-realm-chicken-admin namespace: tssc-tpa. Enter same in 'New passowrd Confirmation'
-       - Make sure 'Temporary' is off and then click 'Save'
-       - Verify now able to login to TPA with admin and password
-
-2. Verify Chicken Realm Client secrets are correct.
-       - Login to Keycloak Admin Console, Use user and password from secret: keycloak-initial-admin namespace: tssc-keycloak.
-       - Click 'Manage realms' in left panel. Then click on realm 'chicken'
-       - Click 'Clients' in left panel. The click Client ID 'cli'. click 'Credentials' tab.
-       - Verify 'Client Secret' matches what is in secret: tpa-realm-chicken-clients' namespace: tssc-tpa
-         If different or contains ${CLI_PLACEHOLDER} perform the following
-       - Click 'Regenerate', click to confirm then click 'Save'
-       - Update secret: tpa-realm-chicken-clients with the new secret in both namespaces: tssc-tpa and tssc-keycloak
-         Also, to be consistent update the value in secret: tssc-trustifaication-integration (cli only)
-         It is located in namespace: tssc-tpa
-
-       - Repeat this step for clients testing-manager and testing-user also.
+1. Trustification Integration may be found in tssc-tpa namespace.
+   Secret - tssc-trustification-integration
 
 ## Development
 
@@ -233,3 +211,4 @@ $ kubectl -n rhacs-operator get secret central-htpasswd -o jsonpath='{.data.pass
 
 * Create your component `Application` CR in `./app-of-apps` folder.
 * Create new folder in `./components` folder holding all the resources of your new component.
+
