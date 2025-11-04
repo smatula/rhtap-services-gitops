@@ -6,12 +6,13 @@ cat > /dev/null
 
 # Get cluster ingress domain
 INGRESS_DOMAIN=""
-while [ -z "$INGRESS_DOMAIN" ]; do
-  INGRESS_DOMAIN=$(oc -n openshift-ingress-operator get ingresscontrollers.operator.openshift.io default -o jsonpath='{.status.domain}' 2>/dev/null || echo "")
-  if [ -z "$INGRESS_DOMAIN" ]; then
-    echo ""
-  fi
-done
+#while [ -z "$INGRESS_DOMAIN" ]; do
+#  INGRESS_DOMAIN=$(oc -n openshift-ingress-operator get ingresscontrollers.operator.openshift.io default -o jsonpath='{.status.domain}' 2>/dev/null)
+#  if [ -z "$INGRESS_DOMAIN" ]; then
+#    echo ""
+#  fi
+#done
+INGRESS_DOMAIN=$(oc -n openshift-ingress-operator get ingresscontrollers.operator.openshift.io default -o jsonpath='{.status.domain}')
 # INGRESS_DOMAIN=$(oc -n openshift-ingress-operator get ingresscontrollers.operator.openshift.io default -o jsonpath='{.status.domain}' 2>/dev/null || echo "apps.example.com")
 
 # Set namespace variables
