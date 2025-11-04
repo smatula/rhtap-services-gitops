@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://github.com/smatula/rhtap-services-gitops
     path: ./components/tpa
-    targetRevision: tpa3
+    targetRevision: tpa3-no-cmp
   syncPolicy:
     managedNamespaceMetadata:
       labels:
