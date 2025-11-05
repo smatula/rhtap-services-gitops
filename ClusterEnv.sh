@@ -26,7 +26,7 @@ REDIRECT_URI3="https://sbom${APP_DOMAIN_URL}"
 REDIRECT_URI4="https://sbom${APP_DOMAIN_URL}/*"
 EOF
 
-git switch -c "$BRANCH"
+git switch "$BRANCH"
 git commit \
     --all \
     --message "chore: update components/tpa/cluster.env $BRANCH"
