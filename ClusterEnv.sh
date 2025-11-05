@@ -17,13 +17,13 @@ OIDC_ISSUER_URL="https://sso.${INGRESS_DOMAIN}/realms/${REALM}"
 
 # Output to components/tpa/config/cluster.env
 cat <<EOF > ./components/tpa/config/cluster.env
-APP_DOMAIN_URL="${APP_DOMAIN_URL}"
-OIDC_ISSUER_URL="${OIDC_ISSUER_URL}"
-KEYCLOAK_HOSTNAME="${KEYCLOAK_HOST}"
-REDIRECT_URI1="https://server${APP_DOMAIN_URL}"
-REDIRECT_URI2="https://server${APP_DOMAIN_URL}/*"
-REDIRECT_URI3="https://sbom${APP_DOMAIN_URL}"
-REDIRECT_URI4="https://sbom${APP_DOMAIN_URL}/*"
+APP_DOMAIN_URL=${APP_DOMAIN_URL}
+OIDC_ISSUER_URL=${OIDC_ISSUER_URL}
+KEYCLOAK_HOSTNAME=${KEYCLOAK_HOST}
+REDIRECT_URI1=https://server${APP_DOMAIN_URL}
+REDIRECT_URI2=https://server${APP_DOMAIN_URL}/*
+REDIRECT_URI3=https://sbom${APP_DOMAIN_URL}
+REDIRECT_URI4=https://sbom${APP_DOMAIN_URL}/*
 EOF
 
 git switch "$BRANCH"
