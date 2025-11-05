@@ -4,8 +4,6 @@
 # This hook generates 7 secrets with passwords and credentials at runtime.
 # It preserves existing passwords (idempotent) if secrets already exist.
 #
-# NOTE: ConfigMap generation happens at BUILD TIME via exec plugin (ConfigMapGenerator.sh)
-#
 # Runs in sync-wave 1 (after RBAC resources in wave 0, before app resources in wave 2+)
 apiVersion: batch/v1
 kind: Job
@@ -62,7 +60,6 @@ spec:
               echo "Checking if secrets already exist..."
 
               # Check each secret individually for better debug output
-              # Note: ConfigMap is always regenerated to ensure correct cluster values
               TPA_DB_EXISTS=false
               REALM_CLIENTS_EXISTS=false
 
@@ -89,7 +86,6 @@ spec:
                 echo ""
                 echo "Summary:"
                 echo "  - Secrets already exist (skipped)"
-                echo "  - ConfigMap generated at build-time by exec plugin"
                 echo "  - Cluster domain: $INGRESS_DOMAIN"
                 exit 0
               fi
@@ -255,5 +251,4 @@ spec:
               echo ""
               echo "Summary:"
               echo "  - 7 Secrets created"
-              echo "  - ConfigMap generated at build-time by exec plugin"
               echo "  - Cluster domain: $INGRESS_DOMAIN"

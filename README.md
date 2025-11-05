@@ -7,8 +7,8 @@ This repo contains gitops definitions for services needed for testing RHTAP/TSSC
 Steps to deploy these services on new cluster:
 1. Edit `./envfile` - fill out the secrets needed.
 2. Run `./create_secrets.sh`. This will create the secrets on your cluster
-3. NOTE: TPA ./create_secrets.sh Updates literals in kustomization.yaml
-         Check in and merge changed files befor continueing.
+3. NOTE: TPA ./create_secrets.sh Updates components/tpa/config/cluster.env
+         Verify correct and pushed to main.
 4. Run `./bootstrap.sh`.
     * This script installs Opehsift Gitops and creates initial app-of-apps.
 
