@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 # Branch
-BRANCH="tpa3-no-cmp
+BRANCH="tpa3-no-cmp"
 
 # Get cluster ingress domain
 INGRESS_DOMAIN=$(oc -n openshift-ingress-operator get ingresscontrollers.operator.openshift.io default -o jsonpath='{.status.domain}' 2>/dev/null || echo "apps.example.com")
