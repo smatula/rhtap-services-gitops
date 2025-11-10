@@ -7,7 +7,9 @@ This repo contains gitops definitions for services needed for testing RHTAP/TSSC
 Steps to deploy these services on new cluster:
 1. Edit `./envfile` - fill out the secrets needed.
 2. Run `./create_secrets.sh`. This will create the secrets on your cluster
-3. Run `./bootstrap.sh`.
+3. NOTE: TPA ./create_secrets.sh Updates components/tpa/config/cluster.env
+         Verify correct and pushed to main.
+4. Run `./bootstrap.sh`.
     * This script installs Opehsift Gitops and creates initial app-of-apps.
 
 ### Artifactory - After deployed on new cluster perform the following to setup.
@@ -211,9 +213,15 @@ $ kubectl -n rhacs-operator get secret central-htpasswd -o jsonpath='{.data.pass
      --output table
    ```
 
+### TPA - After deployement.
+
+1. Trustification Integration may be found in tssc-tpa namespace.
+   Secret - tssc-trustification-integration
+
 ## Development
 
 ### Adding new component
 
 * Create your component `Application` CR in `./app-of-apps` folder.
 * Create new folder in `./components` folder holding all the resources of your new component.
+
