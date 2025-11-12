@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tpa-argocd-manager-token
+  namespace: kube-system
+  annotations:
+    kubernetes.io/service-account.name: tpa-argocd-manager
+type: kubernetes.io/service-account-token

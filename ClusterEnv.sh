@@ -1,33 +1,31 @@
 #!/bin/bash
 set -euo pipefail
-# Branch
-BRANCH="main"
 
 # Get cluster ingress domain
 INGRESS_DOMAIN=$(oc -n openshift-ingress-operator get ingresscontrollers.operator.openshift.io default -o jsonpath='{.status.domain}' 2>/dev/null || echo "apps.example.com")
+
+# Create Argo TPA manager SA
+kubectl create serviceaccount tpa-argocd-manager -n kube-system --dry-run=client -o yaml | kubectl apply -f -
+kubectl create clusterrolebinding tpa-argocd-manager-binding --clusterrole=admin --serviceaccount=kube-system:tpa-argocd-manager --dry-run=client -o yaml | kubectl apply -f -
+kubectl apply -f components/tpa/config/satoken.yaml
+
+# Set Server variables
+export SERVER_URL=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}' 2>/dev/null)
+export CA_DATA=$(kubectl get cm kube-root-ca.crt -o jsonpath="{['data']['ca\\.crt']}" | base64 -w 0)
+export BTOKEN=$(kubectl get secret tpa-argocd-manager-token -n kube-system -o jsonpath="{.data.token}" | base64 --decode)
 
 # Set namespace variables
 TPA_NAMESPACE="tssc-tpa"
 REALM="chicken"
 
-# Derive values
-APP_DOMAIN_URL="-${TPA_NAMESPACE}.${INGRESS_DOMAIN}"
-KEYCLOAK_HOST="sso.${INGRESS_DOMAIN}"
-OIDC_ISSUER_URL="https://sso.${INGRESS_DOMAIN}/realms/${REALM}"
+# Derive annotation values
+export APP_DOMAIN_URL="-${TPA_NAMESPACE}.${INGRESS_DOMAIN}"
+export KEYCLOAK_HOST="sso.${INGRESS_DOMAIN}"
+export OIDC_ISSUER_URL="https://sso.${INGRESS_DOMAIN}/realms/${REALM}"
+export REDIRECT_URI1=https://server${APP_DOMAIN_URL}
+export REDIRECT_URI2=https://server${APP_DOMAIN_URL}/*
+export REDIRECT_URI3=https://sbom${APP_DOMAIN_URL}
+export REDIRECT_URI4=https://sbom${APP_DOMAIN_URL}/*
 
-# Output to components/tpa/config/cluster.env
-cat <<EOF > ./components/tpa/config/cluster.env
-APP_DOMAIN_URL=${APP_DOMAIN_URL}
-OIDC_ISSUER_URL=${OIDC_ISSUER_URL}
-KEYCLOAK_HOSTNAME=${KEYCLOAK_HOST}
-REDIRECT_URI1=https://server${APP_DOMAIN_URL}
-REDIRECT_URI2=https://server${APP_DOMAIN_URL}/*
-REDIRECT_URI3=https://sbom${APP_DOMAIN_URL}
-REDIRECT_URI4=https://sbom${APP_DOMAIN_URL}/*
-EOF
-
-git switch "$BRANCH"
-git commit \
-    --all \
-    --message "chore: update components/tpa/cluster.env $BRANCH"
-git push --set-upstream origin "$BRANCH"
+# Add Cluster secret to register
+envsubst < components/tpa/config/cluster_secret.yaml | kubectl apply -f -
