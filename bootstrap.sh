@@ -66,7 +66,7 @@ EOF
 
 register_cluster() {
     echo "Registering Cluster"
-    ./ClusterEnv.sh
+    ./components/register-cluster/register_cluster.sh
 }
 
 create_app_of_apps(){

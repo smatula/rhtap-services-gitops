@@ -4,15 +4,15 @@ set -euo pipefail
 # Get cluster ingress domain
 INGRESS_DOMAIN=$(oc -n openshift-ingress-operator get ingresscontrollers.operator.openshift.io default -o jsonpath='{.status.domain}' 2>/dev/null || echo "apps.example.com")
 
-# Create Argo TPA manager SA
-kubectl create serviceaccount tpa-argocd-manager -n kube-system --dry-run=client -o yaml | kubectl apply -f -
-kubectl create clusterrolebinding tpa-argocd-manager-binding --clusterrole=admin --serviceaccount=kube-system:tpa-argocd-manager --dry-run=client -o yaml | kubectl apply -f -
-kubectl apply -f components/tpa/config/satoken.yaml
+# Create Argo manager cluster SA
+kubectl create serviceaccount cluster-argocd-manager -n kube-system --dry-run=client -o yaml | kubectl apply -f -
+kubectl create clusterrolebinding cluster-argocd-manager-binding --clusterrole=admin --serviceaccount=kube-system:cluster-argocd-manager --dry-run=client -o yaml | kubectl apply -f -
+kubectl apply -f components/register-cluster/cluster_sa_token.yaml
 
 # Set Server variables
 export SERVER_URL=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}' 2>/dev/null)
 export CA_DATA=$(kubectl get cm kube-root-ca.crt -o jsonpath="{['data']['ca\\.crt']}" | base64 -w 0)
-export BTOKEN=$(kubectl get secret tpa-argocd-manager-token -n kube-system -o jsonpath="{.data.token}" | base64 --decode)
+export BTOKEN=$(kubectl get secret cluster-argocd-manager-token -n kube-system -o jsonpath="{.data.token}" | base64 --decode)
 
 # Set namespace variables
 TPA_NAMESPACE="tssc-tpa"
@@ -28,4 +28,4 @@ export REDIRECT_URI3=https://sbom${APP_DOMAIN_URL}
 export REDIRECT_URI4=https://sbom${APP_DOMAIN_URL}/*
 
 # Add Cluster secret to register
-envsubst < components/tpa/config/cluster_secret.yaml | kubectl apply -f -
+envsubst < components/register-cluster/cluster_secret.yaml | kubectl apply -f -

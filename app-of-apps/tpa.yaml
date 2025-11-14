@@ -10,7 +10,7 @@ spec:
     - clusters:
         selector:
           matchLabels:
-            tpa-service-app: "true"
+            cluster-service-app: "true"
   template:
     metadata:
       name: 'tpa'
