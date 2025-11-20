@@ -3,7 +3,7 @@ name: Lint YAML
 on:
   pull_request:
     branches:
-      - main
+      - test-config-lint
 jobs:
   yamllint:
     name: Yamllint
