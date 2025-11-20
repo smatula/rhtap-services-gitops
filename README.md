@@ -1,4 +1,4 @@
-# rhads-services gitops repo
+# rhtap-services gitops repo.
 
 This repo contains gitops definitions for services needed for testing RHTAP/TSSC like Jenkins, Artifactory, Hive, ...
 
