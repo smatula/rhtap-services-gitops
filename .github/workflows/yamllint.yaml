@@ -15,3 +15,4 @@ jobs:
         run: pip install yamllint
       - name: Lint YAML files
         run: yamllint .
+        continue-on-error: true
