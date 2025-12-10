@@ -10,3 +10,4 @@ resources:
   - hiveconfig.yaml
   - clusterPool.yaml
   - install-config-template-secret.yaml
+

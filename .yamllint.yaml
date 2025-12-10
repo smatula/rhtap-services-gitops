@@ -2,5 +2,12 @@ extends: default
 
 rules:
   line-length:
-    max: 120
+    max: 150
     level: warning
+  empty-lines:
+    max: 2
+    max-start: 2
+    max-end: 2
+    level: warning
+  document-start: disable
+  truthy: disable

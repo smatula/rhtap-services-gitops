@@ -8,7 +8,7 @@ metadata:
 spec:
   upgradeStrategy: Default
   targetNamespaces:
-  - tssc-keycloak
+    - tssc-keycloak
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
