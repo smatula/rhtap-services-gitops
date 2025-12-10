@@ -1080,13 +1080,13 @@ spec:
         protocol: openid-connect
         protocolMappers:
           - config:
-            access.token.claim: "true"
-            claim.name: locale
-            id.token.claim: "true"
-            introspection.token.claim: "true"
-            jsonType.label: String
-            user.attribute: locale
-            userinfo.token.claim: "true"
+              access.token.claim: "true"
+              claim.name: locale
+              id.token.claim: "true"
+              introspection.token.claim: "true"
+              jsonType.label: String
+              user.attribute: locale
+              userinfo.token.claim: "true"
             consentRequired: false
             name: locale
             protocol: openid-connect
@@ -1124,7 +1124,7 @@ spec:
         frontchannelLogout: false
         fullScopeAllowed: true
         implicitFlowEnabled: false
-        odeReRegistrationTimeout: -1
+        nodeReRegistrationTimeout: -1
         notBefore: 0
         optionalClientScopes:
           - address
