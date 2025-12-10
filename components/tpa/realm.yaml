@@ -386,7 +386,7 @@ spec:
         description: SAML ECP Profile Authentication Flow
         providerId: basic-flow
         topLevel: true
-        authenticatorConfig:
+    authenticatorConfig:
       - alias: create unique user config
         config:
           require.password.update.after.registration: "false"
