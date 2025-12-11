@@ -31,12 +31,12 @@ artifactory:
 
   postgresql:
     enabled: true
-    persistence:
-      enabled: true
-      size: 200Gi
     auth:
       password: "a-strong-password"
     primary:
+      persistence:
+        enabled: true
+        size: 200Gi
       podSecurityContext:
         enabled: false
       securityContext:
