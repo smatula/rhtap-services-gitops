@@ -14,7 +14,7 @@ spec:
       credentialsSecretRef:
         name: hive-aws-creds
       region: us-east-1
-  installConfigSecretTemplateRef: 
+  installConfigSecretTemplateRef:
     name: install-config-template
   pullSecretRef:
     name: global-pull-secret
@@ -24,3 +24,4 @@ spec:
   runningCount: 0
   size: 1
   maxConcurrent: 2
+
