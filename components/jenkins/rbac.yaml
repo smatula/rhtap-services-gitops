@@ -4,27 +4,27 @@ metadata:
   name: jenkins-agent-manager
   namespace: jenkins
 rules:
-- apiGroups: [""]
-  resources: ["pods"]
-  verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
-- apiGroups: [""]
-  resources: ["pods/exec"]
-  verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
-- apiGroups: [""]
-  resources: ["pods/log"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: [""]
-  resources: ["pods/portforward"]
-  verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
-- apiGroups: [""]
-  resources: ["secrets"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: [""]
-  resources: ["events"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["route.openshift.io"]
-  resources: ["routes"]
-  verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["pods/portforward"]
+    verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["route.openshift.io"]
+    resources: ["routes"]
+    verbs: ["get", "list"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -32,9 +32,9 @@ metadata:
   name: jenkins-agent-manager
   namespace: jenkins
 subjects:
-- kind: ServiceAccount
-  name: jenkins
-  namespace: jenkins
+  - kind: ServiceAccount
+    name: jenkins
+    namespace: jenkins
 roleRef:
   kind: Role
   name: jenkins-agent-manager

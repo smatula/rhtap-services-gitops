@@ -13,10 +13,10 @@ spec:
     chart: redhat-trusted-profile-analyzer
     helm:
       parameters:
-      - name: appDomain
-        value: PLACEHOLDER_APP_DOMAIN
-      - name: oidc.issuerUrl
-        value: PLACEHOLDER_OIDC_ISSUER
+        - name: appDomain
+          value: PLACEHOLDER_APP_DOMAIN
+        - name: oidc.issuerUrl
+          value: PLACEHOLDER_OIDC_ISSUER
       values: |
         replicas: 1
         openshift: &tpaOpenShift

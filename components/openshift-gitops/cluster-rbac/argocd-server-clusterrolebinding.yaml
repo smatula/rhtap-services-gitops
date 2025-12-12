@@ -7,6 +7,6 @@ roleRef:
   kind: ClusterRole
   name: appstudio-openshift-gitops-argocd-server
 subjects:
-- kind: ServiceAccount
-  name: openshift-gitops-argocd-server
-  namespace: openshift-gitops
+  - kind: ServiceAccount
+    name: openshift-gitops-argocd-server
+    namespace: openshift-gitops

@@ -26,9 +26,9 @@ spec:
         targetRevision: HEAD
         kustomize:
           patches:
-          # Validation note: Ensure target resources meet expected structure:
-          # - KeycloakRealmImport keycloak-chicken: realm.clients length >= 5, clients[4].redirectUris length >= 5
-          # - Application trusted-profile-analyzer: source.helm.parameters length == 2
+            # Validation note: Ensure target resources meet expected structure:
+            # - KeycloakRealmImport keycloak-chicken: realm.clients length >= 5, clients[4].redirectUris length >= 5
+            # - Application trusted-profile-analyzer: source.helm.parameters length == 2
             - patch: |
                 - op: replace
                   path: /spec/host
