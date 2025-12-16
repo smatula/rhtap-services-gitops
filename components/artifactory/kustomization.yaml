@@ -4,4 +4,3 @@ commonAnnotations:
   argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 resources:
   - routes.yaml
-  - pvc.yaml
