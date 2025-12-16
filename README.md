@@ -216,7 +216,7 @@ $ kubectl -n rhacs-operator get secret central-htpasswd -o jsonpath='{.data.pass
 1. Trustification Integration may be found in tssc-tpa namespace.
    Secret - tssc-trustification-integration
 
-## Increase PVC size when App uses StatefulSets (Artifactory, Nexus) and controlled by Gitops
+## Increase PVC size when App uses StatefulSets with volumeClaimTemplates and controlled by Gitops
 
 1. Update Size in appropriate git file (Gitops sync will fail - "Forbidden: updates to statefulset spec..." Expected)
 
@@ -228,7 +228,7 @@ $ kubectl -n rhacs-operator get secret central-htpasswd -o jsonpath='{.data.pass
    * **BY UI:**
      - On confirmation screen make sure "Delete dependent objects of this resource" is not checked
 
-3. Manually patch the existing PVC (via UI or cli) to trigger the actual volume expansion. Wait for resize to complete
+3. (If not at correct size) Manually patch the existing PVC (via UI or cli) to trigger the actual volume expansion. Wait for resize to complete
 
    * **By CLI:**
      - Get PersistentVolumeClaims: ```$oc get pvc -n <NAMESPACE>```
@@ -236,7 +236,7 @@ $ kubectl -n rhacs-operator get secret central-htpasswd -o jsonpath='{.data.pass
    * **By UI:**
      - Goto PVC in Console and use "Expand PVC" action
 
-4. Force Sync to reconcile. Should be successful.
+4. Force Sync to reconcile. Sync should be successful.
 
 ## Development
 
