@@ -29,7 +29,7 @@ reviews:
   suggested_reviewers: true
   auto_assign_reviewers: false
   in_progress_fortune: true
-  poem: true
+  poem: false
   path_filters: []
   path_instructions: []
   abort_on_close: true
