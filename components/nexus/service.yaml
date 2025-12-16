@@ -6,14 +6,14 @@ metadata:
   namespace: nexus
 spec:
   ports:
-  - name: nexus-ui
-    port: 8081
-    protocol: TCP
-    targetPort: 8081
-  - name: nexus-docker
-    port: 8082
-    protocol: TCP
-    targetPort: 8082
+    - name: nexus-ui
+      port: 8081
+      protocol: TCP
+      targetPort: 8081
+    - name: nexus-docker
+      port: 8082
+      protocol: TCP
+      targetPort: 8082
   selector:
     app: nexus
   type: ClusterIP

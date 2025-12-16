@@ -6,17 +6,17 @@ metadata:
   finalizers: ["resources-finalizer.argocd.argoproj.io"]
 spec:
   ignoreDifferences:
-  - group: hive.openshift.io
-    kind: ClusterPool
-    namespace: hive
-    jsonPointers:
-    - /spec/runningCount
-    - /spec/size
+    - group: hive.openshift.io
+      kind: ClusterPool
+      namespace: hive
+      jsonPointers:
+        - /spec/runningCount
+        - /spec/size
   project: gitops-resources
   source:
     path: ./components/multicluster-engine
-    repoURL: https://github.com/redhat-appstudio/rhtap-services-gitops
-    targetRevision: main
+    repoURL: https://github.com/smatula/rhtap-services-gitops
+    targetRevision: test-config-lint-change
   destination:
     namespace: multicluster-engine
     server: https://kubernetes.default.svc
