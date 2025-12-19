@@ -28,5 +28,5 @@ spec:
       volumes:
         - name: nexus-data
           persistentVolumeClaim:
-            claimName: nexus-data-pvc
+            claimName: nexus-data-nexus-0
 
